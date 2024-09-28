@@ -32,6 +32,7 @@ int main() {
 
         system("cls");
         printf("Loading....");
+        
         FILE *randFile = fopen("pseudoRandom.txt", "w");
         fprintf(randFile, "%s", "run");
         fclose(randFile);
