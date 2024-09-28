@@ -22,7 +22,7 @@ void viewImage() {
     fgets(imagePath, sizeof(imagePath), imageSrv);
     fclose(imageSrv);
 
-    HINSTANCE image = ShellExecute(0, "open", imagePath, NULL, NULL, 1);
+   ShellExecute(0, "open", imagePath, NULL, NULL, 1);
 }
 
 int main() {
