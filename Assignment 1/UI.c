@@ -36,7 +36,7 @@ int main() {
         FILE *randFile = fopen("pseudoRandom.txt", "w");
         fprintf(randFile, "%s", "run");
         fclose(randFile);
-        sleep(1);
+        sleep(2);
 
         readWriteRandom();
         sleep(1);
