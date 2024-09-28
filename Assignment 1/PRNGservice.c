@@ -22,6 +22,7 @@ int main() {
         fclose(randFile);
 
         if (strcmp(buffer, "run") == 0) {
+            sleep(1);
             pseudoRandom();
         }
     }
