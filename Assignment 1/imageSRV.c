@@ -12,9 +12,13 @@ int readRandom() {
 
 char* generateImagePath(int randomNumber) {
     char *imageSet[6] = {
-        "/images/image1.jpg", "/images/image2.jpg", 
-        "/images/image3.jpg", "/images/image4.jpg", 
-        "/images/image5.jpg", "/images/image6.jpg"};
+        "C:\\Users\\Derek\\Desktop\\CS361\\Assignment 1\\images\\image1.jpg",
+        "C:\\Users\\Derek\\Desktop\\CS361\\Assignment 1\\images\\image2.jpg", 
+        "C:\\Users\\Derek\\Desktop\\CS361\\Assignment 1\\images\\image3.jpg",
+        "C:\\Users\\Derek\\Desktop\\CS361\\Assignment 1\\images\\image4.jpg",
+        "C:\\Users\\Derek\\Desktop\\CS361\\Assignment 1\\images\\image5.jpg",
+        "C:\\Users\\Derek\\Desktop\\CS361\\Assignment 1\\images\\image6.jpg"
+        };
 
     char imagePath[50];
 

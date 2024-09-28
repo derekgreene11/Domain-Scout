@@ -1,4 +1,5 @@
 #include<stdio.h>
+#include<stdlib.h>
 #include<conio.h>
 #include<windows.h>
 
@@ -14,29 +15,32 @@ void readWriteRandom() {
     fclose(imageSrv);
 }
 
-void printPath() {
-    char imagePath[50];
+void viewImage() {
+    char imagePath[100];
 
     FILE *imageSrv = fopen("image-service.txt", "r");
     fgets(imagePath, sizeof(imagePath), imageSrv);
     fclose(imageSrv);
 
-    printf("Image Path: %s\n\n", imagePath);
+    HINSTANCE result = ShellExecute(0, "open", imagePath, NULL, NULL, 1);
 }
 
 int main() {
     while (1) {
-        printf("Press any key to generate path to a random image...\n");
+        printf("Press any key to view a random image...\n");
         getch();
 
+        system("cls");
+        printf("Loading....");
         FILE *randFile = fopen("pseudoRandom.txt", "w");
         fprintf(randFile, "%s", "run");
         fclose(randFile);
-        sleep(2);
+        sleep(1);
 
         readWriteRandom();
         sleep(1);
 
-        printPath();
+        system("cls");
+        viewImage();
     }
 }
