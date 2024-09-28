@@ -25,7 +25,7 @@ char* generateImagePath(int randomNumber) {
 }
 
 int main() {
-    char buffer[5];
+    char buffer[2];
 
     while (1) {
         FILE *imageSrv = fopen("image-service.txt", "r");
