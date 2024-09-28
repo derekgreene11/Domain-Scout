@@ -22,7 +22,7 @@ void viewImage() {
     fgets(imagePath, sizeof(imagePath), imageSrv);
     fclose(imageSrv);
 
-    HINSTANCE result = ShellExecute(0, "open", imagePath, NULL, NULL, 1);
+    HINSTANCE image = ShellExecute(0, "open", imagePath, NULL, NULL, 1);
 }
 
 int main() {
@@ -32,7 +32,7 @@ int main() {
 
         system("cls");
         printf("Loading....");
-        
+
         FILE *randFile = fopen("pseudoRandom.txt", "w");
         fprintf(randFile, "%s", "run");
         fclose(randFile);
