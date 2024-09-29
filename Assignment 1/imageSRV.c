@@ -1,3 +1,12 @@
+/* 
+Name: Derek Greene
+OSU Email: greenede@oregonstate.edu
+Course: CS361
+Assignment: Assignment 1
+Due Date: 10/7/2024
+Description: Microservice to generate image path from random number
+*/
+
 #include<stdio.h>
 #include<string.h>
 
@@ -47,7 +56,7 @@ int main() {
             FILE *imageSrv = fopen("image-service.txt", "w");
             fputs(imagePath, imageSrv);
             fclose(imageSrv);
-           continue;
+            continue;
         }
     }
 }

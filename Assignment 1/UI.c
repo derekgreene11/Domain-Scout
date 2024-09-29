@@ -1,3 +1,12 @@
+/* 
+Name: Derek Greene
+OSU Email: greenede@oregonstate.edu
+Course: CS361
+Assignment: Assignment 1
+Due Date: 10/7/2024
+Description: Microservice to display UI, get user input, and display image at generated path
+*/
+
 #include<stdio.h>
 #include<stdlib.h>
 #include<conio.h>
@@ -6,7 +15,7 @@
 void readWriteRandom() {
     char randNum[2];
 
-    FILE *randFile = fopen("pseudoRandom.txt", "r");
+    FILE *randFile = fopen("prng-service.txt", "r");
     fgets(randNum, sizeof(randNum), randFile);
     fclose(randFile);
 
@@ -33,7 +42,7 @@ int main() {
         system("cls");
         printf("Loading....");
 
-        FILE *randFile = fopen("pseudoRandom.txt", "w");
+        FILE *randFile = fopen("prng-service.txt", "w");
         fprintf(randFile, "%s", "run");
         fclose(randFile);
         sleep(2);
