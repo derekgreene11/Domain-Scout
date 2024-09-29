@@ -1,4 +1,5 @@
 #include<stdio.h>
+#include<conio.h>
 #include<string.h>
 
 int readRandom() {
@@ -43,6 +44,7 @@ int main() {
             int randomNumber = readRandom();
             char *imagePath = generateImagePath(randomNumber);   
 
+            sleep(1);
             FILE *imageSrv = fopen("image-service.txt", "w");
             fputs(imagePath, imageSrv);
             fclose(imageSrv);
