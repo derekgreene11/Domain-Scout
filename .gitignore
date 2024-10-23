@@ -4,6 +4,6 @@
 *.mp4
 /Assignment 1/images/
 /.vscode
-App/venv
+App/venv/
 *.idea
 *.pdf
