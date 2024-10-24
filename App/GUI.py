@@ -94,7 +94,6 @@ class MainWindow(QMainWindow):
         bt_help.clicked.connect(lambda: HelpWindow().exec())
         bt_settings.clicked.connect(lambda: SettingsWindow().exec())
               
-        
         layout_table.addWidget(self.data_table)
         layout_table.addLayout(layout_buttons)
         
@@ -178,8 +177,7 @@ class WHOISWindow(QDialog):
         
         layout_title.addWidget(lb_title2)
         layout_title.setAlignment(Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignVCenter)
-        
-        
+
         bt_back = QPushButton("Back")
         bt_back.setFixedSize(100, 30)
         bt_export = QPushButton("Export CSV")
@@ -318,8 +316,7 @@ class SettingsWindow(QDialog):
         lb_title2.setFixedWidth(350)
         lb_title2.setStyleSheet("color: #00b2c3;")
         lb_title2.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignHCenter)
-        
-        
+
         bt_save = QPushButton("Save")
         bt_save.setFixedSize(100, 30)
         bt_defaults = QPushButton("Load Defaults")
@@ -343,8 +340,7 @@ class SettingsWindow(QDialog):
                            
         lb_refresh = QLabel("""<span style="color: #00b2c3; font-size: 24px; font-family: Cooper Black;">Refresh Rate </span><span style="color: grey; font-size: 14px; 
                             font-family: Cooper Black;">-changes how often the app refreshes the data</span>""")
-        
-        
+                
         layout_darkMode.addWidget(lb_darkMode)
         layout_darkMode.addWidget(cb_darkMode)
         layout_lightMode.addWidget(lb_lightMode)
@@ -368,9 +364,6 @@ class SettingsWindow(QDialog):
         layout_main.setAlignment(lb_title2, Qt.AlignmentFlag.AlignHCenter)
         layout_main.setAlignment(bt_back, Qt.AlignmentFlag.AlignHCenter)
         self.setLayout(layout_main)
-
-
-
 
 app = QApplication(sys.argv)
 
