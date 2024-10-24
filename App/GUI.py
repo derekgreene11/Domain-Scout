@@ -10,7 +10,7 @@ class MainWindow(QMainWindow):
         
         self.setWindowTitle("Domain Scout")
         self.setMinimumSize(QSize(1060,600))
-        self.setWindowIcon(QIcon(r"C:\Users\Derek\Desktop\CS361\App\appicon.ico"))
+        self.setWindowIcon(QIcon("C:/Users/Derek/Desktop/CS361/App/appicon.ico"))
 
         layout_main = QVBoxLayout()
         layout_search = QHBoxLayout()
