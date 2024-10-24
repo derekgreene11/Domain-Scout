@@ -2,7 +2,7 @@
 *.exe
 *.txt
 *.mp4
-/Assignment 1/images/
+/Assignment 1/
 /.vscode
 venv/
 *.idea
