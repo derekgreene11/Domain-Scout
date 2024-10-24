@@ -58,6 +58,8 @@ class MainWindow(QMainWindow):
         bt_whois.setFixedSize(100, 30)
         bt_add = QPushButton("Add Record")
         bt_add.setFixedSize(100, 30)
+        bt_save = QPushButton("Save Records")
+        bt_save.setFixedSize(100,30)
         bt_delete = QPushButton("Delete Record")
         bt_delete.setFixedSize(100, 30)
         bt_import = QPushButton("Import CSV")
@@ -75,6 +77,8 @@ class MainWindow(QMainWindow):
         layout_buttons.addWidget(bt_whois)
         layout_buttons.addSpacing(10)
         layout_buttons.addWidget(bt_add)
+        layout_buttons.addSpacing(10)
+        layout_buttons.addWidget(bt_save)
         layout_buttons.addSpacing(10)
         layout_buttons.addWidget(bt_delete)
         layout_buttons.addSpacing(10)
@@ -152,6 +156,7 @@ class WHOISWindow(QDialog):
         super().__init__()
         
         self.setWindowTitle("WHOIS Details")
+        self.setWindowIcon(QIcon("C:/Users/Derek/Desktop/CS361/App/appicon.ico"))
         self.setMinimumSize(QSize(600,630))   
         self.setMaximumSize(QSize(600,630)) 
                
@@ -220,6 +225,7 @@ class AboutWindow(QDialog):
         super().__init__()
         
         self.setWindowTitle("About")
+        self.setWindowIcon(QIcon("C:/Users/Derek/Desktop/CS361/App/appicon.ico"))
         self.setMinimumSize(QSize(400,400)) 
         self.setMaximumSize(QSize(400,400))  
                
@@ -258,6 +264,7 @@ class HelpWindow(QDialog):
         super().__init__()
 
         self.setWindowTitle("Help")
+        self.setWindowIcon(QIcon("C:/Users/Derek/Desktop/CS361/App/appicon.ico"))
         self.setMinimumSize(QSize(600,600))  
         self.setMaximumSize(QSize(600,600)) 
                
@@ -278,7 +285,7 @@ class HelpWindow(QDialog):
         aboutSection = QTextEdit()
         aboutSection.setReadOnly(True)
         aboutSection.setHtml("""<h2 style="color: #00b2c3;"><strong>Add Records</strong></h2><ul><li style="font-size: 16px;">To add a new record, press the 'Add Record' button and enter
-                            the details into the new row.</li></ul><h2 style="color: #00b2c3;"><strong>Delete Recods</Strong></h2><ul>
+                            the details into the new row.<li style="font-size: 16px;">Press the 'Save Records' button to save changes.</li></ul><h2 style="color: #00b2c3;"><strong>Delete Recods</Strong></h2><ul>
                             <li style="font-size: 16px;">To delete a record, select the desired record and press the 'Delete Record' button.<p style="color: red;">***Deleting a record is permanent and cannot be undone***</p></li></ul>
                             <h2 style="color: #00b2c3;"><strong>Search & Sort Records</strong></h2><ul><li style="font-size: 16px;">Records can be searched by entering a search query in the search bar.</li>
                             <li style="font-size: 16px;">Records can be sorted in ascending or descending order by clicking on the column headings (e.g. 'Domain', 'Admin Email', etc.).</li></ul><h2 style="color:
@@ -301,6 +308,7 @@ class SettingsWindow(QDialog):
         super().__init__()
 
         self.setWindowTitle("Settings")
+        self.setWindowIcon(QIcon("C:/Users/Derek/Desktop/CS361/App/appicon.ico"))
         self.setMinimumSize(QSize(600,600))  
         self.setMaximumSize(QSize(600,600)) 
                
