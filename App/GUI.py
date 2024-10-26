@@ -24,6 +24,7 @@ class MainWindow(QMainWindow):
         self.data_table.setRowCount(50)
         self.data_table.setColumnCount(9)
         self.data_table.setHorizontalHeaderLabels(["Domain", "Admin Email", "Registrar", "Tech Email", "Registrant Email", "Creation Date", "Expiration Date", "Updated Date", "emails"  ])
+        self.data_table.horizontalHeader().setStretchLastSection(True)
         
         appTitle = QLabel("Domain Scout")
         font = QFont("Cooper Black", 24, QFont.Weight.Bold)
@@ -174,6 +175,7 @@ class WHOISWindow(QDialog):
         self.data_table.setColumnWidth(0, 500)
         self.data_table.setVerticalHeaderLabels(["Domain", "Registrar", "WHOIS Server", "Referral URL", "Updated Date", "Creation Date", "Expiration Date", "Nameservers", "Status", "Emails", "DNNSEC", "Name", "Org", "Address", "City", "State", "Postal Code", "Country"  ])
         self.data_table.setHorizontalHeaderLabels([""])
+        
         
         lb_title2 = QLabel("WHOIS Details")
         font = QFont("Cooper Black", 24, QFont.Weight.Bold)
