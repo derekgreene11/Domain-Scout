@@ -11,14 +11,14 @@ Clone the Repo and create a Python virtual enviornment
 
 `git clone https://github.com/derekgreene11/CS361.git`
 
-`python -m venv venv`
+`python3 -m venv venv`
 
 Activate the virtual enviornment and install required packages
 
-`./venv/scripts/activate`
+`source venv/bin/activate`
 
 `pip install -r requirements.txt`
 
 Run the program
 
-`python GUI.py`
+`python3 GUI.py`
