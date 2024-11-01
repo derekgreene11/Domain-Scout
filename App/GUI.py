@@ -12,6 +12,14 @@ class MainWindow(QMainWindow):
         self.setMinimumSize(QSize(1060,600))
         self.setWindowIcon(QIcon("C:/Users/Derek/Desktop/CS361/App/appicon.ico"))
 
+        # Light Mode and Dark Mode Styles 
+        self.lightModeStyle = """QMainWindow { background-color: #cccccc;color: black; } QPushButton { background-color: #00b2c3; color: black; } QCheckBox { color: black; } 
+                                 QLineEdit { background-color: white; color: black; } QTableWidget { background-color: #f2f2f2; color: black; } QDialog { background-color: #cccccc; color: black; } 
+                                 QTextEdit { background-color: #f2f2f2; color: black }"""
+        self.darkModeStyle = """QMainWindow { background-color: #2c2c2c; color: white; } QPushButton { background-color: #00b2c3; color: white; } QCheckBox { color: white; }
+                            QLineEdit { background-color: #3c3c3c; color: white; } QTableWidget { background-color: #3c3c3c; color: white; } QDialog { background-color: #2c2c2c; color: white; }
+                                QTextEdit { background-colorL #3c3c3c; color: white; }"""
+        self.setStyleSheet(self.lightModeStyle)
         layout_main = QVBoxLayout()
         layout_search = QHBoxLayout()
         layout_search.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
@@ -56,23 +64,23 @@ class MainWindow(QMainWindow):
         layout_search.addStretch()
          
         bt_whois = QPushButton("WHOIS Query")
-        bt_whois.setFixedSize(100, 30)
+        bt_whois.setFixedSize(110, 30)
         bt_add = QPushButton("Add Record")
-        bt_add.setFixedSize(100, 30)
+        bt_add.setFixedSize(110, 30)
         bt_save = QPushButton("Save Records")
-        bt_save.setFixedSize(100,30)
+        bt_save.setFixedSize(110,30)
         bt_delete = QPushButton("Delete Record")
-        bt_delete.setFixedSize(100, 30)
+        bt_delete.setFixedSize(110, 30)
         bt_import = QPushButton("Import CSV")
-        bt_import.setFixedSize(100, 30)
+        bt_import.setFixedSize(110, 30)
         bt_export = QPushButton("Export CSV")
-        bt_export.setFixedSize(100, 30)
+        bt_export.setFixedSize(110, 30)
         bt_help = QPushButton("Help")
-        bt_help.setFixedSize(100, 30)
+        bt_help.setFixedSize(110, 30)
         bt_settings = QPushButton("Settings")
-        bt_settings.setFixedSize(100, 30)
+        bt_settings.setFixedSize(110, 30)
         bt_about = QPushButton("About")
-        bt_about.setFixedSize(100, 30)
+        bt_about.setFixedSize(110, 30)
         
         layout_buttons.addSpacing(10)
         layout_buttons.addWidget(bt_whois)
@@ -93,12 +101,12 @@ class MainWindow(QMainWindow):
         layout_buttons.addSpacing(10)
         layout_buttons.addWidget(bt_about)  
         
-        bt_whois.clicked.connect(lambda: WHOISWindow().exec())
+        bt_whois.clicked.connect(lambda: WHOISWindow(self).exec())
         bt_add.clicked.connect(lambda: self.data_table.insertRow(self.data_table.rowCount()))
         bt_delete.clicked.connect(lambda: self.deleteRow())
-        bt_about.clicked.connect(lambda: AboutWindow().exec())
-        bt_help.clicked.connect(lambda: HelpWindow().exec())
-        bt_settings.clicked.connect(lambda: SettingsWindow().exec())
+        bt_about.clicked.connect(lambda: AboutWindow(self).exec())
+        bt_help.clicked.connect(lambda: HelpWindow(self).exec())
+        bt_settings.clicked.connect(lambda: SettingsWindow(self).exec())
               
         layout_table.addWidget(self.data_table)
         layout_table.addLayout(layout_buttons)
@@ -112,7 +120,9 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(widget_search)
         self.allRecords = self.fetchData()
         self.popTable(self.allRecords)
-    
+
+
+
     def fetchData(self):
         response = requests.get('https://derekrgreene.com/ct-data/api')
         if response.status_code == 200:
@@ -153,9 +163,11 @@ class MainWindow(QMainWindow):
             QMessageBox.warning(self, "ERROR", "Failed to delete record from server.")
 
 class WHOISWindow(QDialog):
-    def __init__(self):
+    def __init__(self, main_window):
         super().__init__()
-        
+
+        self.main_window = main_window
+        self.setStyleSheet(main_window.styleSheet())
         self.setWindowTitle("WHOIS Details")
         self.setWindowIcon(QIcon("C:/Users/Derek/Desktop/CS361/App/appicon.ico"))
         self.setMinimumSize(QSize(600,630))   
@@ -198,9 +210,9 @@ class WHOISWindow(QDialog):
         bt_about.setFixedSize(100, 30)
         
         bt_back.clicked.connect(self.close)
-        bt_about.clicked.connect(lambda: AboutWindow().exec())
-        bt_help.clicked.connect(lambda: HelpWindow().exec())
-        bt_settings.clicked.connect(lambda: SettingsWindow().exec())
+        bt_about.clicked.connect(lambda: AboutWindow(self.main_window).exec())
+        bt_help.clicked.connect(lambda: HelpWindow(self.main_window).exec())
+        bt_settings.clicked.connect(lambda: SettingsWindow(self.main_window).exec())
         
         layout_buttons.addSpacing(10)
         layout_buttons.addWidget(bt_back)
@@ -223,9 +235,11 @@ class WHOISWindow(QDialog):
         self.setLayout(layout_main)
 
 class AboutWindow(QDialog):
-    def __init__(self):
+    def __init__(self, main_window):
         super().__init__()
         
+        self.main_window = main_window
+        self.setStyleSheet(main_window.styleSheet())
         self.setWindowTitle("About")
         self.setWindowIcon(QIcon("C:/Users/Derek/Desktop/CS361/App/appicon.ico"))
         self.setMinimumSize(QSize(400,400)) 
@@ -262,9 +276,11 @@ class AboutWindow(QDialog):
         self.setLayout(layout_main)
         
 class HelpWindow(QDialog):
-    def __init__(self):
+    def __init__(self, main_window):
         super().__init__()
 
+        self.main_window = main_window
+        self.setStyleSheet(main_window.styleSheet())
         self.setWindowTitle("Help")
         self.setWindowIcon(QIcon("C:/Users/Derek/Desktop/CS361/App/appicon.ico"))
         self.setMinimumSize(QSize(600,600))  
@@ -306,9 +322,11 @@ class HelpWindow(QDialog):
         self.setLayout(layout_main)
 
 class SettingsWindow(QDialog):
-    def __init__(self):
+    def __init__(self, main_window):
         super().__init__()
 
+        self.main_window = main_window
+        self.setStyleSheet(main_window.styleSheet())
         self.setWindowTitle("Settings")
         self.setWindowIcon(QIcon("C:/Users/Derek/Desktop/CS361/App/appicon.ico"))
         self.setMinimumSize(QSize(600,600))  
@@ -318,7 +336,6 @@ class SettingsWindow(QDialog):
         layout_buttons = QHBoxLayout()
         layout_main.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignHCenter)
         layout_darkMode = QHBoxLayout()
-        layout_lightMode = QHBoxLayout()
         layout_refresh = QHBoxLayout()
                 
         lb_title2 = QLabel("Settings")
@@ -328,38 +345,32 @@ class SettingsWindow(QDialog):
         lb_title2.setStyleSheet("color: #00b2c3;")
         lb_title2.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignHCenter)
 
-        bt_save = QPushButton("Save")
-        bt_save.setFixedSize(100, 30)
         bt_defaults = QPushButton("Load Defaults")
-        bt_defaults.setFixedSize(100, 30)
+        bt_defaults.setFixedSize(130, 30)
         bt_back = QPushButton("Back")
         bt_back.setFixedSize(100, 30)   
         bt_back.clicked.connect(self.close)
-        
-        cb_darkMode = QCheckBox()
+        self.cb_darkMode = QCheckBox()
+        self.cb_darkMode.setChecked(self.main_window.styleSheet() == self.main_window.darkModeStyle)
+        self.cb_darkMode.stateChanged.connect(self.toggleDarkMode)
+        bt_defaults.clicked.connect(lambda: (self.cb_darkMode.setChecked(False), self.cbb_refresh.setCurrentIndex(0)))
+        self.cb_darkMode.setStyleSheet("QCheckBox::indicator { width: 30px; height: 30px; }")
         lb_darkMode = QLabel("""<span style="color: #00b2c3; font-size: 24px; font-family: Cooper Black;">Dark Mode </span><span style="color: grey; font-size: 14px; 
                             font-family: Cooper Black;">-changes the application theme to a dark color scheme</span>""")
-        cb_lightMode = QCheckBox()
-        lb_lightMode = QLabel("""<span style="color: #00b2c3; font-size: 24px; font-family: Cooper Black;">Light Mode </span><span style="color: grey; font-size: 14px; 
-                            font-family: Cooper Black;">-changes the application theme to a light color scheme</span>""")
-        cbb_refresh = QComboBox()
-        cbb_refresh.addItems(["1s", "2s", "3s", "4s", "5s", "6s", "7s", "8s", "9s", "10s", "11s", "12s", "13s", "14s", "15s", "16s", "17s", "18s", 
+        self.cbb_refresh = QComboBox()
+        self.cbb_refresh.addItems(["1s", "2s", "3s", "4s", "5s", "6s", "7s", "8s", "9s", "10s", "11s", "12s", "13s", "14s", "15s", "16s", "17s", "18s", 
                              "19s", "20s", "21s", "22s", "23s", "24s", "25s", "26s", "27s", "28s", "29s", "30s", "31s", "32s", "33s", "34s", "35s",
                              "36s", "37s", "38s", "39s", "40s", "41s", "42s", "43s", "44s", "45s", "46s", "47s", "48s", "49s", "50s", "51s", "52s",
                              "53s", "54s", "55s", "56s", "57s", "58s", "59s", "60s"])
-        cbb_refresh.setFixedSize(50, 30)
-                           
+        self.cbb_refresh.setFixedSize(50, 30)              
         lb_refresh = QLabel("""<span style="color: #00b2c3; font-size: 24px; font-family: Cooper Black;">Refresh Rate </span><span style="color: grey; font-size: 14px; 
                             font-family: Cooper Black;">-changes how often the app refreshes the data</span>""")
                 
         layout_darkMode.addWidget(lb_darkMode)
-        layout_darkMode.addWidget(cb_darkMode)
-        layout_lightMode.addWidget(lb_lightMode)
-        layout_lightMode.addWidget(cb_lightMode)
+        layout_darkMode.addSpacing(10)
+        layout_darkMode.addWidget(self.cb_darkMode)
         layout_refresh.addWidget(lb_refresh)
-        layout_refresh.addWidget(cbb_refresh)
-        layout_buttons.addSpacing(130)
-        layout_buttons.addWidget(bt_save)
+        layout_refresh.addWidget(self.cbb_refresh)
         layout_buttons.addWidget(bt_defaults)
         layout_buttons.addWidget(bt_back)
         layout_main.addWidget(lb_title2)
@@ -367,14 +378,21 @@ class SettingsWindow(QDialog):
         layout_main.addSpacing(30)
         layout_main.addLayout(layout_darkMode)
         layout_main.addSpacing(30)
-        layout_main.addLayout(layout_lightMode)
-        layout_main.addSpacing(30)
         layout_main.addLayout(layout_refresh)
-        
-        layout_buttons.addStretch()
         layout_main.setAlignment(lb_title2, Qt.AlignmentFlag.AlignHCenter)
         layout_main.setAlignment(bt_back, Qt.AlignmentFlag.AlignHCenter)
         self.setLayout(layout_main)
+    
+    
+    def toggleDarkMode(self):
+        if self.cb_darkMode.isChecked():
+            self.main_window.setStyleSheet(self.main_window.darkModeStyle)
+            self.setStyleSheet(self.main_window.darkModeStyle)
+        else:
+            self.main_window.setStyleSheet(self.main_window.lightModeStyle)
+            self.setStyleSheet(self.main_window.lightModeStyle)
+
+
 
 app = QApplication(sys.argv)
 
