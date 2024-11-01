@@ -15,10 +15,10 @@ class MainWindow(QMainWindow):
         # Light Mode and Dark Mode Styles 
         self.lightModeStyle = """QMainWindow { background-color: #cccccc;color: black; } QPushButton { background-color: #00b2c3; color: black; } QCheckBox { color: black; } 
                                  QLineEdit { background-color: white; color: black; } QTableWidget { background-color: #f2f2f2; color: black; } QDialog { background-color: #cccccc; color: black; } 
-                                 QTextEdit { background-color: #f2f2f2; color: black }"""
+                                 QTextEdit { background-color: #f2f2f2; color: black } QMessageBox { background-color: #cccccc; color: black; }"""
         self.darkModeStyle = """QMainWindow { background-color: #2c2c2c; color: white; } QPushButton { background-color: #00b2c3; color: white; } QCheckBox { color: white; }
                             QLineEdit { background-color: #3c3c3c; color: white; } QTableWidget { background-color: #3c3c3c; color: white; } QDialog { background-color: #2c2c2c; color: white; }
-                                QTextEdit { background-colorL #3c3c3c; color: white; }"""
+                                QTextEdit { background-color: #3c3c3c; color: white; } QMessageBox { background-color: #3c3c3c; color: white; }"""
         self.setStyleSheet(self.lightModeStyle)
         layout_main = QVBoxLayout()
         layout_search = QHBoxLayout()
@@ -121,8 +121,6 @@ class MainWindow(QMainWindow):
         self.allRecords = self.fetchData()
         self.popTable(self.allRecords)
 
-
-
     def fetchData(self):
         response = requests.get('https://derekrgreene.com/ct-data/api')
         if response.status_code == 200:
@@ -155,7 +153,7 @@ class MainWindow(QMainWindow):
         
         apiUrl = f"https://derekrgreene.com/ct-data/api/delete?domain={delRecord}"
         response = requests.delete(apiUrl)
-        
+
         if response.status_code == 200:
             self.data_table.removeRow(currRow)
             QMessageBox.information(self, "Success", "Record Deleted Successfully!")
@@ -187,7 +185,6 @@ class WHOISWindow(QDialog):
         self.data_table.setColumnWidth(0, 500)
         self.data_table.setVerticalHeaderLabels(["Domain", "Registrar", "WHOIS Server", "Referral URL", "Updated Date", "Creation Date", "Expiration Date", "Nameservers", "Status", "Emails", "DNNSEC", "Name", "Org", "Address", "City", "State", "Postal Code", "Country"  ])
         self.data_table.setHorizontalHeaderLabels([""])
-        
         
         lb_title2 = QLabel("WHOIS Details")
         font = QFont("Cooper Black", 24, QFont.Weight.Bold)
@@ -224,14 +221,11 @@ class WHOISWindow(QDialog):
         layout_buttons.addWidget(bt_settings)
         layout_buttons.addSpacing(10)
         layout_buttons.addWidget(bt_about)
-
         layout_table.addWidget(self.data_table)
         layout_table.addLayout(layout_buttons)
-        
         layout_main.addLayout(layout_title)
         layout_main.addLayout(layout_search) 
         layout_main.addLayout(layout_table)
-
         self.setLayout(layout_main)
 
 class AboutWindow(QDialog):
@@ -247,18 +241,15 @@ class AboutWindow(QDialog):
                
         layout_main = QVBoxLayout()
         layout_main.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignHCenter)
-                
         lb_title2 = QLabel("About Domain Scout")
         font = QFont("Cooper Black", 24, QFont.Weight.Bold)
         lb_title2.setFont(font)
         lb_title2.setFixedWidth(350)
         lb_title2.setStyleSheet("color: #00b2c3;")
         lb_title2.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignHCenter)
-
         bt_back = QPushButton("Back")
         bt_back.setFixedSize(100, 30)   
         bt_back.clicked.connect(self.close)
-        
         aboutSection = QTextEdit()
         aboutSection.setReadOnly(True)
         aboutSection.setHtml("""<p"><span style="color: #00b2c3; font-family: Cooper Black;">Domain Scout</span> is the primary GUI to view vulnerable domains found by CT Domain Data (see https://derekrgreene.com/ct-data).<br><br> 
@@ -288,18 +279,15 @@ class HelpWindow(QDialog):
                
         layout_main = QVBoxLayout()
         layout_main.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignHCenter)
-                
         lb_title2 = QLabel("Help")
         font = QFont("Cooper Black", 36, QFont.Weight.Bold)
         lb_title2.setFont(font)
         lb_title2.setFixedWidth(350)
         lb_title2.setStyleSheet("color: #00b2c3;")
         lb_title2.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignHCenter)
-
         bt_back = QPushButton("Back")
         bt_back.setFixedSize(100, 30)   
         bt_back.clicked.connect(self.close)
-        
         aboutSection = QTextEdit()
         aboutSection.setReadOnly(True)
         aboutSection.setHtml("""<h2 style="color: #00b2c3;"><strong>Add Records</strong></h2><ul><li style="font-size: 16px;">To add a new record, press the 'Add Record' button and enter
@@ -313,7 +301,6 @@ class HelpWindow(QDialog):
                             </h2><ul><li style="font-size: 16px;">This application fetches data from an API at:<br>https://derekrgreene.com/ct-data/api<br><br><span style="color: #00b2c3;"><strong>NOTE:</strong></span> If you are unable to resolve 
                             this domain, the application will not load the data. Please ensure the API is reachable.</li></ul><br><p style="text-align: center";<strong>Made with &#128154; by <span style="color: #00b2c3;">Derek R. Greene</span></strong><br>
                             &copy; 2024 <span style="color: #00b2c3;">Derek R. Greene</span>. All rights reserved.</p>""")
-        
         layout_main.addWidget(lb_title2)
         layout_main.addWidget(bt_back)
         layout_main.setAlignment(lb_title2, Qt.AlignmentFlag.AlignHCenter)
@@ -383,7 +370,6 @@ class SettingsWindow(QDialog):
         layout_main.setAlignment(bt_back, Qt.AlignmentFlag.AlignHCenter)
         self.setLayout(layout_main)
     
-    
     def toggleDarkMode(self):
         if self.cb_darkMode.isChecked():
             self.main_window.setStyleSheet(self.main_window.darkModeStyle)
@@ -392,11 +378,8 @@ class SettingsWindow(QDialog):
             self.main_window.setStyleSheet(self.main_window.lightModeStyle)
             self.setStyleSheet(self.main_window.lightModeStyle)
 
-
-
 app = QApplication(sys.argv)
 
 window = MainWindow()
 window.show()
-
 app.exec()
