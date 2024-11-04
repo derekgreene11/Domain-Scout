@@ -21,7 +21,6 @@ class MainWindow(QMainWindow):
                                 QTextEdit { background-color: #3c3c3c; color: white; } QMessageBox { background-color: #3c3c3c; color: white; }"""
         self.setStyleSheet(self.lightModeStyle)
         self.showLogin()
-        
 
         layout_main = QVBoxLayout()
         layout_search = QHBoxLayout()
@@ -489,13 +488,6 @@ class LoginWindow(QDialog):
             self.accept()
         else:
             QMessageBox.warning(self, "Login Failed", "<font color='red'>Invalid username or password!<font>")
-
-
-
-
-
-
-
 
 app = QApplication(sys.argv)
 
