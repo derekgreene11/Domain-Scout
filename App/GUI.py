@@ -10,7 +10,7 @@ class MainWindow(QMainWindow):
         
         self.setWindowTitle("Domain Scout")
         self.setMinimumSize(QSize(1060,600))
-        self.setWindowIcon(QIcon("C:/Users/Derek/Desktop/CS361/App/appicon.ico"))
+        self.setWindowIcon(QIcon("/home/derek/Desktop/CS361/App/appicon.png"))
 
         # Light Mode and Dark Mode Styles 
         self.lightModeStyle = """QMainWindow { background-color: #cccccc;color: black; } QPushButton { background-color: #00b2c3; color: black; } QCheckBox { color: black; } 
@@ -204,7 +204,7 @@ class WHOISWindow(QDialog):
         self.main_window = main_window
         self.setStyleSheet(main_window.styleSheet())
         self.setWindowTitle("WHOIS Details")
-        self.setWindowIcon(QIcon("appicon.ico"))
+        self.setWindowIcon(QIcon("/home/derek/Desktop/CS361/App/appicon.ico"))
         self.setMinimumSize(QSize(600,630))   
         self.setMaximumSize(QSize(600,630)) 
                
@@ -272,7 +272,7 @@ class AboutWindow(QDialog):
         self.main_window = main_window
         self.setStyleSheet(main_window.styleSheet())
         self.setWindowTitle("About")
-        self.setWindowIcon(QIcon("C:/Users/Derek/Desktop/CS361/App/appicon.ico"))
+        self.setWindowIcon(QIcon("/home/derek/Desktop/CS361/App/appicon.ico"))
         self.setMinimumSize(QSize(400,400)) 
         self.setMaximumSize(QSize(400,400))  
                
@@ -310,7 +310,7 @@ class HelpWindow(QDialog):
         self.main_window = main_window
         self.setStyleSheet(main_window.styleSheet())
         self.setWindowTitle("Help")
-        self.setWindowIcon(QIcon("C:/Users/Derek/Desktop/CS361/App/appicon.ico"))
+        self.setWindowIcon(QIcon("/home/derek/Desktop/CS361/App/appicon.ico"))
         self.setMinimumSize(QSize(600,600))  
         self.setMaximumSize(QSize(600,600)) 
                
@@ -352,7 +352,7 @@ class SettingsWindow(QDialog):
         self.main_window = main_window
         self.setStyleSheet(main_window.styleSheet())
         self.setWindowTitle("Settings")
-        self.setWindowIcon(QIcon("C:/Users/Derek/Desktop/CS361/App/appicon.ico"))
+        self.setWindowIcon(QIcon("C:/home/derek/Desktop/CS361/App/appicon.ico"))
         self.setMinimumSize(QSize(600,600))  
         self.setMaximumSize(QSize(600,600)) 
                
@@ -422,7 +422,7 @@ class LoginWindow(QDialog):
         self.main_window = main_window
         self.setStyleSheet(main_window.styleSheet())
         self.setWindowTitle("Welcome to Domain Scout")
-        self.setWindowIcon(QIcon("C:/Users/Derek/Desktop/CS361/App/appicon.ico"))
+        self.setWindowIcon(QIcon('appicon.png'))
         self.setMinimumSize(QSize(600,600))  
         self.setMaximumSize(QSize(600,600)) 
                
@@ -490,7 +490,6 @@ class LoginWindow(QDialog):
             QMessageBox.warning(self, "Login Failed", "<font color='red'>Invalid username or password!<font>")
 
 app = QApplication(sys.argv)
-
 window = MainWindow()
 window.show()
 app.exec()
