@@ -1,13 +1,26 @@
+# Name: Derek Greene
+# OSU Email: greenede@oregonstate.edu
+# Course: CS361 - Software Engineering I
+# Description: Domain Scout is the primary GUI to view vulnerable domains found by CT Domain Data. CT Domain Data identifies disposable email addresses used as contact methods in WHOIS records.
+#              Domains are collected using Certstream Server Go which streams Certificate Transparency logs continuously to a websocket connection. Domains are extracted from the data stream and
+#              WHOIS queries are subsequently made to identify contact email addresses which are compared against a list of 15k+ known disposable email domains. If a disposable email address is 
+#              found, the domain and associated data is added to the database and displayed in Domain Scout. This application fetches data from an API at: https://derekrgreene.com/ct-data/api.
+#              If you are unable to resolve this domain, the application will not load the data. Please ensure the API is reachable.
+
 from PyQt6.QtCore import *
 from PyQt6.QtWidgets import *
 from PyQt6.QtGui import *
+from dotenv import load_dotenv
 import sys
+import os
 import requests
 
+# Main Window Class
 class MainWindow(QMainWindow):
+    # Initialize the main window
     def __init__(self):
+        # Call the parent constructor to initialize QMainWindow
         super().__init__()
-        
         self.setWindowTitle("Domain Scout")
         self.setMinimumSize(QSize(1060,600))
         self.setWindowIcon(QIcon("/home/derek/Desktop/CS361/App/appicon.png"))
@@ -17,8 +30,9 @@ class MainWindow(QMainWindow):
                                  QLineEdit { background-color: white; color: black; } QTableWidget { background-color: #f2f2f2; color: black; } QDialog { background-color: #cccccc; color: black; } 
                                  QTextEdit { background-color: #f2f2f2; color: black } QMessageBox { background-color: #cccccc; color: black; }"""
         self.darkModeStyle = """QMainWindow { background-color: #2c2c2c; color: white; } QPushButton { background-color: #00b2c3; color: white; } QCheckBox { color: white; }
-                            QLineEdit { background-color: #3c3c3c; color: white; } QTableWidget { background-color: #3c3c3c; color: white; } QDialog { background-color: #2c2c2c; color: white; }
+                                QLineEdit { background-color: #3c3c3c; color: white; } QTableWidget { background-color: #3c3c3c; color: white; } QDialog { background-color: #2c2c2c; color: white; }
                                 QTextEdit { background-color: #3c3c3c; color: white; } QMessageBox { background-color: #3c3c3c; color: white; }"""
+        # Default lightModeStyle
         self.setStyleSheet(self.lightModeStyle)
         self.showLogin()
 
@@ -78,7 +92,6 @@ class MainWindow(QMainWindow):
         bt_export = QPushButton("Export CSV")
         bt_export.setFixedSize(110, 30)
         bt_help = QPushButton("Help")
-
         bt_help.setFixedSize(110, 30)
         bt_settings = QPushButton("Settings")
         bt_settings.setFixedSize(110, 30)
@@ -104,6 +117,7 @@ class MainWindow(QMainWindow):
         layout_buttons.addSpacing(10)
         layout_buttons.addWidget(bt_about)  
         
+        # Events for button presses
         bt_whois.clicked.connect(lambda: WHOISWindow(self).exec())
         bt_add.clicked.connect(lambda: self.data_table.insertRow(self.data_table.rowCount()))
         bt_delete.clicked.connect(lambda: self.checkDelete())
@@ -113,17 +127,20 @@ class MainWindow(QMainWindow):
               
         layout_table.addWidget(self.data_table)
         layout_table.addLayout(layout_buttons)
-        
         layout_main.addLayout(layout_title)
         layout_main.addLayout(layout_search) 
         layout_main.addLayout(layout_table)
-           
         widget_search = QWidget()
         widget_search.setLayout(layout_main)
         self.setCentralWidget(widget_search)
         self.allRecords = self.fetchData()
         self.popTable(self.allRecords)
   
+    """
+    Method to display user tutorial upon login. 
+    Parameters: None
+    Returns: None
+    """
     def tutorial(self):
         tutorial = QMessageBox(self)
         tutorial.setWindowTitle("Welcome Tutorial")
@@ -134,13 +151,25 @@ class MainWindow(QMainWindow):
                          from list and then select the 'view details' button on the right of the screen.</span></li></ul><ul><span style="color: #00b2c3; font-family: Cooper Black;">Importing & Exporting:
                          </span><li><span style="color: #3c3c3c; font-family: Cooper Black;">To import and export data into the database, make sure data is formatted as a CSV. See Help page for details and more information.</span></li>/</ul></p>""")
         tutorial.exec()
-
+    
+    """
+    Method to display LoginWindow and load main window upon DialogCode.Accepted
+    Parameters: None
+    Returns: None
+    """
     def showLogin(self):
         login = LoginWindow(self)
         if login.exec() == QDialog.DialogCode.Accepted:
             self.show()
             self.tutorial()
-
+        else:
+            sys.exit(0)
+    
+    """
+    Method to fetch ct-data from api endpoint @ derekrgreene.com/ct-data/api.
+    Parameters: None
+    Returns: []: list of dict
+    """
     def fetchData(self):
         response = requests.get('https://derekrgreene.com/ct-data/api')
         if response.status_code == 200:
@@ -150,11 +179,21 @@ class MainWindow(QMainWindow):
             print("Error: Failed to connect to API")
         return []
     
+    """
+    Method to filter records by query term entered in search bar.
+    Parameters: None
+    Returns: None
+    """
     def inputTbData(self):
         term = self.sb_search.text().lower()
         filteredRecords = [record for record in self.allRecords if any(term in str(value).lower() for value in record.values())]
         self.popTable(filteredRecords)
-        
+    
+    """
+    Method to populate QTableWidget with data fetched from ct-data api. 
+    Parameters: records: list of dict
+    Returns: None
+    """
     def popTable(self, records):
         self.data_table.setRowCount(len(records))
         
@@ -167,9 +206,15 @@ class MainWindow(QMainWindow):
                 item = QTableWidgetItem(str(record.get(column, "")))
                 self.data_table.setItem(rowX, colY, item)
     
+    """
+    Method to display popup asking if user really wants to delete record. 
+    Parameters: None
+    Returns: None
+    """
     def checkDelete(self):
         checkDelMsg = QMessageBox()
-
+        
+        # ensure pop up msg matches current system UI (lightmode vs darkmode)
         if self.styleSheet() == self.lightModeStyle:
             checkDelMsg.setStyleSheet("QMessageBox { background-color: #cccccc; color: black; }")
         else:
@@ -183,11 +228,17 @@ class MainWindow(QMainWindow):
         
         if response == QMessageBox.StandardButton.Yes:
             self.deleteRow()
-
+    
+    """
+    Method to delete selected record from database. Displays success or error message.
+    Parameters: None
+    Returns: None
+    """
     def deleteRow(self):
         currRow = self.data_table.currentRow()
         delRecord = self.data_table.item(currRow, 0).text()
         
+        # API call to delete record from database
         apiUrl = f"https://derekrgreene.com/ct-data/api/delete?domain={delRecord}"
         response = requests.delete(apiUrl)
 
@@ -197,11 +248,13 @@ class MainWindow(QMainWindow):
         else:
             QMessageBox.warning(self, "ERROR", "<font color='red'>Failed to delete record from server.</font>")
 
+# Record Details Window Class
 class WHOISWindow(QDialog):
     def __init__(self, main_window):
         super().__init__()
-
         self.main_window = main_window
+
+        # Set UI to match main window
         self.setStyleSheet(main_window.styleSheet())
         self.setWindowTitle("WHOIS Details")
         self.setWindowIcon(QIcon("/home/derek/Desktop/CS361/App/appicon.ico"))
@@ -243,6 +296,7 @@ class WHOISWindow(QDialog):
         bt_about = QPushButton("About")
         bt_about.setFixedSize(100, 30)
         
+        # Events for button presses
         bt_back.clicked.connect(self.close)
         bt_about.clicked.connect(lambda: AboutWindow(self.main_window).exec())
         bt_help.clicked.connect(lambda: HelpWindow(self.main_window).exec())
@@ -265,11 +319,13 @@ class WHOISWindow(QDialog):
         layout_main.addLayout(layout_table)
         self.setLayout(layout_main)
 
+# About Window Class
 class AboutWindow(QDialog):
     def __init__(self, main_window):
         super().__init__()
-        
         self.main_window = main_window
+
+        # Set UI to match main window
         self.setStyleSheet(main_window.styleSheet())
         self.setWindowTitle("About")
         self.setWindowIcon(QIcon("/home/derek/Desktop/CS361/App/appicon.ico"))
@@ -285,7 +341,9 @@ class AboutWindow(QDialog):
         lb_title2.setStyleSheet("color: #00b2c3;")
         lb_title2.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignHCenter)
         bt_back = QPushButton("Back")
-        bt_back.setFixedSize(100, 30)   
+        bt_back.setFixedSize(100, 30)
+
+        # Event for button press
         bt_back.clicked.connect(self.close)
         aboutSection = QTextEdit()
         aboutSection.setReadOnly(True)
@@ -302,12 +360,14 @@ class AboutWindow(QDialog):
         layout_main.setAlignment(bt_back, Qt.AlignmentFlag.AlignHCenter)
         layout_main.addWidget(aboutSection)
         self.setLayout(layout_main)
-        
+
+# Help Window Class
 class HelpWindow(QDialog):
     def __init__(self, main_window):
         super().__init__()
-
         self.main_window = main_window
+
+        # Set UI to match main window
         self.setStyleSheet(main_window.styleSheet())
         self.setWindowTitle("Help")
         self.setWindowIcon(QIcon("/home/derek/Desktop/CS361/App/appicon.ico"))
@@ -324,6 +384,8 @@ class HelpWindow(QDialog):
         lb_title2.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignHCenter)
         bt_back = QPushButton("Back")
         bt_back.setFixedSize(100, 30)   
+
+        # Event for button press
         bt_back.clicked.connect(self.close)
         aboutSection = QTextEdit()
         aboutSection.setReadOnly(True)
@@ -345,11 +407,13 @@ class HelpWindow(QDialog):
         layout_main.addWidget(aboutSection)
         self.setLayout(layout_main)
 
+# Settings Window Class
 class SettingsWindow(QDialog):
     def __init__(self, main_window):
         super().__init__()
-
         self.main_window = main_window
+
+        # Set UI to match main window
         self.setStyleSheet(main_window.styleSheet())
         self.setWindowTitle("Settings")
         self.setWindowIcon(QIcon("C:/home/derek/Desktop/CS361/App/appicon.ico"))
@@ -373,11 +437,14 @@ class SettingsWindow(QDialog):
         bt_defaults.setFixedSize(130, 30)
         bt_back = QPushButton("Back")
         bt_back.setFixedSize(100, 30)   
+        
+        # Events for button presses
         bt_back.clicked.connect(self.close)
         self.cb_darkMode = QCheckBox()
         self.cb_darkMode.setChecked(self.main_window.styleSheet() == self.main_window.darkModeStyle)
         self.cb_darkMode.stateChanged.connect(self.toggleDarkMode)
         bt_defaults.clicked.connect(lambda: (self.cb_darkMode.setChecked(False), self.cbb_refresh.setCurrentIndex(0)))
+
         self.cb_darkMode.setStyleSheet("QCheckBox::indicator { width: 30px; height: 30px; }")
         lb_darkMode = QLabel("""<span style="color: #00b2c3; font-size: 24px; font-family: Cooper Black;">Dark Mode </span><span style="color: grey; font-size: 14px; 
                             font-family: Cooper Black;">-changes the application theme to a dark color scheme</span>""")
@@ -407,6 +474,11 @@ class SettingsWindow(QDialog):
         layout_main.setAlignment(bt_back, Qt.AlignmentFlag.AlignHCenter)
         self.setLayout(layout_main)
     
+    """
+    Method to set UI dark upon checkbox selection and revert to light UI upon deselection. 
+    Parameters: None
+    Returns: None
+    """
     def toggleDarkMode(self):
         if self.cb_darkMode.isChecked():
             self.main_window.setStyleSheet(self.main_window.darkModeStyle)
@@ -415,11 +487,13 @@ class SettingsWindow(QDialog):
             self.main_window.setStyleSheet(self.main_window.lightModeStyle)
             self.setStyleSheet(self.main_window.lightModeStyle)
 
+# Login Window Class
 class LoginWindow(QDialog):
     def __init__(self, main_window):
         super().__init__()
-
         self.main_window = main_window
+
+        # Set UI to match main window
         self.setStyleSheet(main_window.styleSheet())
         self.setWindowTitle("Welcome to Domain Scout")
         self.setWindowIcon(QIcon('appicon.png'))
@@ -457,9 +531,12 @@ class LoginWindow(QDialog):
         self.lb_pass.setFont(font3)
         self.lb_pass.setStyleSheet("color: #3c3c3c;")
         self.lb_pInput = QLineEdit()
+
+        # set input to show as *** for password input
         self.lb_pInput.setEchoMode(QLineEdit.EchoMode.Password)
-        
         self.bt_login = QPushButton("Login")
+
+        # Event for button press
         self.bt_login.clicked.connect(self.login)
 
         startInfo = QTextEdit()
@@ -478,18 +555,29 @@ class LoginWindow(QDialog):
         layout_main.addWidget(startInfo)
         layout_main.addWidget(self.bt_login)
         self.setLayout(layout_main)
-
+    
+    """
+    Method to check for correct username and password. Displays sucess or fail message. Store username and password in .env in root app directory.
+    Parameters: None
+    Returns: None
+    """
     def login(self):
-        username = self.lb_uInput.text()
-        password = self.lb_pInput.text()
+        # Load .env file for username and password credentials
+        load_dotenv()
+        usernameInput = self.lb_uInput.text()
+        passwordInput = self.lb_pInput.text()
+        userName = os.getenv("USER1")
+        passWord = os.getenv("PASS")
 
-        if username == "admin" and password == "1234":
+        if usernameInput == userName and passwordInput == passWord:
             QMessageBox.information(self, "Login", "<font color='black'>Login successful!</font>")
             self.accept()
         else:
             QMessageBox.warning(self, "Login Failed", "<font color='red'>Invalid username or password!<font>")
 
+# Create application object
 app = QApplication(sys.argv)
+# Create main window object
 window = MainWindow()
-window.show()
+# Start Qt event loop
 app.exec()
