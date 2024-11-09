@@ -331,6 +331,8 @@ class MainWindow(QMainWindow):
 
     """
     Method to start microservices upon main applicaton start. 
+    Parameters: None
+    Returns: None
     """
     def startMicroservices(self):
         subprocess.Popen([sys.executable, 'export.py'])  
