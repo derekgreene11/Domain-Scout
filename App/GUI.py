@@ -13,6 +13,7 @@ from PyQt6.QtGui import *
 from dotenv import load_dotenv
 import sys
 import os
+import subprocess
 import requests
 import socket
 
@@ -164,6 +165,7 @@ class MainWindow(QMainWindow):
         if login.exec() == QDialog.DialogCode.Accepted:
             self.show()
             self.tutorial()
+            self.startMicroservices()
         else:
             sys.exit(0)
     
@@ -327,6 +329,12 @@ class MainWindow(QMainWindow):
         finally:
             serverSocket.close() 
 
+    """
+    Method to start microservices upon main applicaton start. 
+    """
+    def startMicroservices(self):
+        subprocess.Popen([sys.executable, 'export.py'])  
+        
 # Record Details Window Class
 class WHOISWindow(QDialog):
     def __init__(self, main_window):
