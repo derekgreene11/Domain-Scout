@@ -14,10 +14,10 @@ from dotenv import load_dotenv
 import sys
 import os
 import requests
+import socket
 
 # Main Window Class
 class MainWindow(QMainWindow):
-    # Initialize the main window
     def __init__(self):
         # Call the parent constructor to initialize QMainWindow
         super().__init__()
@@ -87,9 +87,9 @@ class MainWindow(QMainWindow):
         bt_save.setFixedSize(110,30)
         bt_delete = QPushButton("Delete Record")
         bt_delete.setFixedSize(110, 30)
-        bt_import = QPushButton("Import CSV")
+        bt_import = QPushButton("Import SQL")
         bt_import.setFixedSize(110, 30)
-        bt_export = QPushButton("Export CSV")
+        bt_export = QPushButton("Export SQL")
         bt_export.setFixedSize(110, 30)
         bt_help = QPushButton("Help")
         bt_help.setFixedSize(110, 30)
@@ -121,6 +121,8 @@ class MainWindow(QMainWindow):
         bt_whois.clicked.connect(lambda: WHOISWindow(self).exec())
         bt_add.clicked.connect(lambda: self.data_table.insertRow(self.data_table.rowCount()))
         bt_delete.clicked.connect(lambda: self.checkDelete())
+        bt_save.clicked.connect(lambda: self.saveRecord())
+        bt_export.clicked.connect(lambda: self.exportRecords())
         bt_about.clicked.connect(lambda: AboutWindow(self).exec())
         bt_help.clicked.connect(lambda: HelpWindow(self).exec())
         bt_settings.clicked.connect(lambda: SettingsWindow(self).exec())
@@ -247,6 +249,83 @@ class MainWindow(QMainWindow):
             QMessageBox.information(self, "Success", "<font color='green'>Record Deleted Successfully!</font>")
         else:
             QMessageBox.warning(self, "ERROR", "<font color='red'>Failed to delete record from server.</font>")
+
+    """
+    Method to save new records to database. Displays message upon success.
+    Parameters: None
+    Returns: None
+    """
+    def saveRecord(self):
+        newRecords = []
+
+        # Check for new records to save
+        for row in range(self.data_table.rowCount()):
+            domain = self.data_table.item(row, 0).text() if self.data_table.item(row, 0) else ""
+            admin_email = self.data_table.item(row, 1).text() if self.data_table.item(row, 1) else ""
+            registrar = self.data_table.item(row, 2).text() if self.data_table.item(row, 2) else ""
+            tech_email = self.data_table.item(row, 3).text() if self.data_table.item(row, 3) else ""
+            registrant_email = self.data_table.item(row, 4).text() if self.data_table.item(row, 4) else ""
+            creation_date = self.data_table.item(row, 5).text() if self.data_table.item(row, 5) else ""
+            expiration_date = self.data_table.item(row, 6).text() if self.data_table.item(row, 6) else ""
+            updated_date = self.data_table.item(row, 7).text() if self.data_table.item(row, 7) else ""
+            emails = self.data_table.item(row, 8).text() if self.data_table.item(row, 8) else ""
+
+            if domain and (domain not in [record['domain'] for record in self.allRecords]):
+                newRecord = {
+                    "domain": domain,
+                    "admin_email": admin_email,
+                    "registrar": registrar,
+                    "tech_email": tech_email,
+                    "registrant_email": registrant_email,
+                    "creation_date": creation_date,
+                    "expiration_date": expiration_date,
+                    "updated_date": updated_date,
+                    "emails": emails
+                }
+                newRecords.append(newRecord)
+
+        # Send record to save to API to save to CT-Data application database
+        if newRecords:
+            try:
+                response = requests.post('https://derekrgreene.com/ct-data/api/save', json=newRecords)
+
+                if response.status_code == 200:
+                    QMessageBox.information(self, "Success", "New record(s) saved successfully!", QMessageBox.StandardButton.Ok)
+
+                    # Update allRecords list with new records
+                    self.allRecords.extend(newRecords)
+                    self.newRecords.clear()
+                    self.popTable(self.allRecords)
+
+                else:
+                    QMessageBox.warning(self, "Error", f"Failed to save records: {response.json().get('error')}", QMessageBox.StandardButton.Ok)
+
+            except requests.exceptions.RequestException as e:
+                QMessageBox.critical(self, "Error", f"An error occurred while saving the records: {e}", QMessageBox.StandardButton.Ok)
+        else:
+            QMessageBox.information(self, "No New Records", "There are no new records to save.", QMessageBox.StandardButton.Ok)
+    
+    """
+    Method to call export microservice to fetch SQL drump from API and save to local machine. Microservice is called oveer TCP sockets.
+    Parameters: None
+    Returns: None
+    """
+    def exportRecords(self):
+        server = "127.0.0.1"
+        port = 1024
+
+        serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            serverSocket.connect((server, port))
+            serverSocket.send("start".encode())
+            response = serverSocket.recv(1024).decode()
+
+            if response:
+                QMessageBox.information(self, "Success", response)
+        except ConnectionRefusedError:
+            QMessageBox.warning(self, "Connection Failed", "Could not connect to the server.")
+        finally:
+            serverSocket.close() 
 
 # Record Details Window Class
 class WHOISWindow(QDialog):
