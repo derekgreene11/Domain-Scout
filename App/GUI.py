@@ -152,7 +152,7 @@ class MainWindow(QMainWindow):
                          <span style="color: #3c3c3c; font-family: Cooper Black;">to search records, enter your search query into the search bar at top of window.</span></li></ul><ul><span style="color: 
                          #00b2c3; font-family: Cooper Black;">WHOIS Details:</span><li><span style="color: #3c3c3c; font-family: Cooper Black;">to view associated WHOIS details, select desired domain
                          from list and then select the 'view details' button on the right of the screen.</span></li></ul><ul><span style="color: #00b2c3; font-family: Cooper Black;">Importing & Exporting:
-                         </span><li><span style="color: #3c3c3c; font-family: Cooper Black;">To import and export data into the database, make sure data is formatted as a CSV. See Help page for details and more information.</span></li>/</ul></p>""")
+                         </span><li><span style="color: #3c3c3c; font-family: Cooper Black;">To import and export data into the database, make sure data is formatted exactly matching the SQL database. See Help page for details and more information.</span></li>/</ul></p>""")
         tutorial.exec()
     
     """
@@ -376,7 +376,7 @@ class WHOISWindow(QDialog):
 
         bt_back = QPushButton("Back")
         bt_back.setFixedSize(100, 30)
-        bt_export = QPushButton("Export CSV")
+        bt_export = QPushButton("Export SQL")
         bt_export.setFixedSize(100, 30)
         bt_help = QPushButton("Help")
         bt_help.setFixedSize(100, 30)
@@ -483,9 +483,9 @@ class HelpWindow(QDialog):
                             <li style="font-size: 16px;">To delete a record, select the desired record and press the 'Delete Record' button.<p style="color: red;">***Deleting a record is permanent and cannot be undone***</p></li></ul>
                             <h2 style="color: #00b2c3;"><strong>Search & Sort Records</strong></h2><ul><li style="font-size: 16px;">Records can be searched by entering a search query in the search bar.</li>
                             <li style="font-size: 16px;">Records can be sorted in ascending or descending order by clicking on the column headings (e.g. 'Domain', 'Admin Email', etc.).</li></ul><h2 style="color:
-                            #00b2c3;"><strong>Importing & Exporting Records</h2></strong><ul><li style="font-size: 16px;">In order to properly import CSV records into the database, they will need to match the 
-                            <strong>EXACT</strong> format of the database.</li><li style="font-size: 16px;">To view the required format, first export the data to view the resultant CSV file.</li><li style="font-size:
-                            16px;">To export all records, simply click on the 'Export CSV' button. <br><span style="color: #00b2c3;"><strong>NOTE:</strong></span> This will export all records.</li></ul><h2 style="color: #00b2c3;"><strong>Misc</strong>
+                            #00b2c3;"><strong>Importing & Exporting Records</h2></strong><ul><li style="font-size: 16px;">In order to properly import SQL records into the database, they will need to match the 
+                            <strong>EXACT</strong> format of the database.</li><li style="font-size: 16px;">To view the required format, first export the data to view the resultant SQL dump file.</li><li style="font-size:
+                            16px;">To export all records, simply click on the 'Export SQL' button. <br><span style="color: #00b2c3;"><strong>NOTE:</strong></span> This will export all records.</li></ul><h2 style="color: #00b2c3;"><strong>Misc</strong>
                             </h2><ul><li style="font-size: 16px;">This application fetches data from an API at:<br>https://derekrgreene.com/ct-data/api<br><br><span style="color: #00b2c3;"><strong>NOTE:</strong></span> If you are unable to resolve 
                             this domain, the application will not load the data. Please ensure the API is reachable.</li></ul><br><p style="text-align: center";<strong>Made with &#128154; by <span style="color: #00b2c3;">Derek R. Greene</span></strong><br>
                             &copy; 2024 <span style="color: #00b2c3;">Derek R. Greene</span>. All rights reserved.</p>""")
