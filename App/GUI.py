@@ -27,7 +27,8 @@ class MainWindow(QMainWindow):
         self.setWindowIcon(QIcon("appicon.ico"))
         
         # Start micro-services
-        self.export_service = subprocess.Popen([sys.executable, 'export.py'])  
+        self.export_service = subprocess.Popen([sys.executable, 'export.py'])
+        self.import_service = subprocess.Popen([sys.executable, 'import.py'])
         self.whois_service = subprocess.Popen([sys.executable, 'whoisQuery.py'])
 
         # Light Mode and Dark Mode Styles 
@@ -128,6 +129,7 @@ class MainWindow(QMainWindow):
         bt_delete.clicked.connect(lambda: self.checkDelete())
         bt_save.clicked.connect(lambda: self.saveRecord())
         bt_export.clicked.connect(lambda: self.exportRecords())
+        bt_import.clicked.connect(lambda: self.importRecords())
         bt_about.clicked.connect(lambda: AboutWindow(self).exec())
         bt_help.clicked.connect(lambda: HelpWindow(self).exec())
         bt_settings.clicked.connect(lambda: SettingsWindow(self).exec())
@@ -333,9 +335,26 @@ class MainWindow(QMainWindow):
             if response:
                 QMessageBox.information(self, "Success", response)
         except ConnectionRefusedError:
-            QMessageBox.warning(self, "Connection Failed", "Could not connect to the server.")
+            QMessageBox.warning(self, "Connection Failed", "Could not connect to the service.")
         finally:
-            serverSocket.close() 
+            serverSocket.close()
+
+    def importRecords(self):
+        server = "127.0.0.1"
+        port = 1026
+
+        serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            serverSocket.connect((server, port))
+            serverSocket.send("start".encode())
+            response = serverSocket.recv(1024).decode()
+
+            if response:
+                QMessageBox.information(self, "Status", response)
+        except ConnectionRefusedError:
+            QMessageBox.warning(self, "Connection Failed", "Could not connect to the service.")
+        finally:
+            serverSocket.close()
     
     def whoisQuery(self):
         selectedRow = self.data_table.currentRow()
@@ -353,6 +372,7 @@ class MainWindow(QMainWindow):
     """    
     def closeEvent(self, event):
         self.export_service.terminate()
+        self.import_service.terminate()
         self.whois_service.terminate()
         event.accept()
         

@@ -8,13 +8,12 @@ import requests
 import socket
 import os
 
-# Class to handle exporting SQL dump from Domain Scout database
-class Export:
+# Class to handle importing SQL dump to Domain Scout database
+class Import:
     def __init__(self):
-        self.API_URL = "https://derekrgreene.com/ct-data/api/export-dump"
-        self.SAVE_DIR = "backups/"
+        self.API_URL = "https://derekrgreene.com/ct-data/api/import-dump"
         self.server = "127.0.0.1"
-        self.port = 1024
+        self.port = 1026
         self.hostSocket = None
     
     """
@@ -27,10 +26,10 @@ class Export:
         self.hostSocket.bind((self.server, self.port))
         self.hostSocket.listen(5)
 
-        print(f"Export micro-service listening on {self.server}:{self.port}")
+        print(f"Import micro-service listening on {self.server}:{self.port}")
     
     """
-    Method to await export requests from Domain Scout.
+    Method to await import requests from Domain Scout.
     Parameters: None
     Returns: clientSocket: object
     """
@@ -42,27 +41,29 @@ class Export:
             return None    
     
     """
-    Method to export SQL dump from API and save to local file system.
+    Method to import SQL dump to API.
     Parameters: clientSocket: object
     Returns: None
     """
-    def exportSQL(self, clientSocket):
-        response = requests.get(self.API_URL)
+    def importSQL(self, clientSocket):
+        with open(file_path, 'rb') as f:
+            files = {'file': (os.path.basename(file_path), f)}
+            response = requests.post(self.API_URL, files=files)
+            
+            if response.status_code == 200:
+                print(f"Imported SQL dump {file_path}")
+                msg = f"{file_path} has been imported successfully"
+                clientSocket.send(msg.encode())
+            else:
+                print(f"Failed to import SQL dump {file_path}")
+                    
 
-        if response.status_code == 200:
-            if not os.path.exists(self.SAVE_DIR):
-                os.makedirs(self.SAVE_DIR)
+            
+       
+        #print(f"Exported SQL dump to {file_path}")
 
-            content_disposition = response.headers.get('Content-Disposition')
-            filename = content_disposition.split('filename=')[1].strip('"') if content_disposition else 'backup.sql'
-    
-            file_path = os.path.join(self.SAVE_DIR, filename)
-            with open(file_path, 'wb') as f:
-                f.write(response.content)
+            
 
-            msg = f"{filename} has been downloaded successfully to {file_path}"
-            clientSocket.send(msg.encode())
-            print(f"Exported SQL dump to {file_path}")
 
     """
     Method to loop and run export micro-service.
@@ -74,9 +75,9 @@ class Export:
             
         while True:
             clientSocket = self.awaitStart()
-            self.exportSQL(clientSocket)
+            self.importSQL(clientSocket)
             clientSocket.close()
 
-client = Export()
+client = Import()
 client.run()
 
