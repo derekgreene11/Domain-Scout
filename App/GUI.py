@@ -13,7 +13,6 @@ from PyQt6.QtGui import *
 from dotenv import load_dotenv
 import sys
 import os
-import json
 import subprocess
 import requests
 import socket
@@ -25,7 +24,11 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.setWindowTitle("Domain Scout")
         self.setMinimumSize(QSize(1060,600))
-        self.setWindowIcon(QIcon("/home/derek/Desktop/CS361/App/appicon.png"))
+        self.setWindowIcon(QIcon("appicon.ico"))
+        
+        # Start micro-services
+        self.export_service = subprocess.Popen([sys.executable, 'export.py'])  
+        self.whois_service = subprocess.Popen([sys.executable, 'whoisQuery.py'])
 
         # Light Mode and Dark Mode Styles 
         self.lightModeStyle = """QMainWindow { background-color: #cccccc;color: black; } QPushButton { background-color: #00b2c3; color: black; } QCheckBox { color: black; } 
@@ -149,11 +152,11 @@ class MainWindow(QMainWindow):
         tutorial = QMessageBox(self)
         tutorial.setWindowTitle("Welcome Tutorial")
         tutorial.setWindowIcon(QIcon("appicon.ico"))
-        tutorial.setText("""<p><h1><span style="color: #00b2c3; font-family: Cooper Black;">Welcome Tutorial!</span></h1><br><ul><span style="color: #00b2c3; font-family: Cooper Black;">Searching:</span><li>
-                         <span style="color: #3c3c3c; font-family: Cooper Black;">to search records, enter your search query into the search bar at top of window.</span></li></ul><ul><span style="color: 
+        tutorial.setText("""<p><h1><span style="color: #00b2c3; font-family: Cooper Black; text-align: center;">Welcome Tutorial!</span></h1><br><ul><span style="color: #00b2c3; font-family: Cooper Black;">Searching:</span><li>
+                         <span style="color: #3c3c3c; font-family: Cooper Black;">to search records, enter your search query into the search bar at top of window.</span></li></ul><br><ul><span style="color: 
                          #00b2c3; font-family: Cooper Black;">WHOIS Details:</span><li><span style="color: #3c3c3c; font-family: Cooper Black;">to view associated WHOIS details, select desired domain
-                         from list and then select the 'view details' button on the right of the screen.</span></li></ul><ul><span style="color: #00b2c3; font-family: Cooper Black;">Importing & Exporting:
-                         </span><li><span style="color: #3c3c3c; font-family: Cooper Black;">To import and export data into the database, make sure data is formatted exactly matching the SQL database. See Help page for details and more information.</span></li>/</ul></p>""")
+                         from list and then select the 'view details' button on the right of the screen.</span></li></ul><br><ul><span style="color: #00b2c3; font-family: Cooper Black;">Importing & Exporting:
+                         </span><li><span style="color: #3c3c3c; font-family: Cooper Black;">To import and export data into the database, make sure data is formatted exactly matching the SQL database. See Help page for details and more information.</span></li></ul></p>""")
         tutorial.exec()
     
     """
@@ -166,7 +169,6 @@ class MainWindow(QMainWindow):
         if login.exec() == QDialog.DialogCode.Accepted:
             self.show()
             self.tutorial()
-            self.startMicroservices()
         else:
             sys.exit(0)
     
@@ -297,7 +299,7 @@ class MainWindow(QMainWindow):
 
                     # Update allRecords list with new records
                     self.allRecords.extend(newRecords)
-                    self.newRecords.clear()
+                    newRecords.clear()
                     self.popTable(self.allRecords)
 
                 else:
@@ -332,17 +334,22 @@ class MainWindow(QMainWindow):
     
     def whoisQuery(self):
         selectedRow = self.data_table.currentRow()
-        domain = self.data_table.item(selectedRow, 0).text()
-        WHOISWindow(self, domain).exec()
+        if selectedRow != -1:
+            selectedRow = self.data_table.currentRow()
+            domain = self.data_table.item(selectedRow, 0).text()
+            WHOISWindow(self, domain).exec()
+        else:
+            QMessageBox.warning(self, "No Record", "You must click on a record first!")
         
     """
-    Method to start microservices upon main applicaton start. 
+    Method to stop microservices upon main applicaton exit. 
     Parameters: None
     Returns: None
-    """
-    def startMicroservices(self):
-        subprocess.Popen([sys.executable, 'export.py'])  
-        subprocess.Popen([sys.executable, 'whoisQuery.py'])
+    """    
+    def closeEvent(self, event):
+        self.export_service.terminate()
+        self.whois_service.terminate()
+        event.accept()
         
 # Record Details Window Class
 class WHOISWindow(QDialog):
@@ -354,7 +361,7 @@ class WHOISWindow(QDialog):
         # Set UI to match main window
         self.setStyleSheet(main_window.styleSheet())
         self.setWindowTitle("WHOIS Details")
-        self.setWindowIcon(QIcon("/home/derek/Desktop/CS361/App/appicon.ico"))
+        self.setWindowIcon(QIcon("appicon.ico"))
         self.setMinimumSize(QSize(600,630))   
         self.setMaximumSize(QSize(600,630)) 
                
@@ -482,7 +489,7 @@ class AboutWindow(QDialog):
         # Set UI to match main window
         self.setStyleSheet(main_window.styleSheet())
         self.setWindowTitle("About")
-        self.setWindowIcon(QIcon("/home/derek/Desktop/CS361/App/appicon.ico"))
+        self.setWindowIcon(QIcon("appicon.ico"))
         self.setMinimumSize(QSize(400,400)) 
         self.setMaximumSize(QSize(400,400))  
                
@@ -524,7 +531,7 @@ class HelpWindow(QDialog):
         # Set UI to match main window
         self.setStyleSheet(main_window.styleSheet())
         self.setWindowTitle("Help")
-        self.setWindowIcon(QIcon("/home/derek/Desktop/CS361/App/appicon.ico"))
+        self.setWindowIcon(QIcon("appicon.ico"))
         self.setMinimumSize(QSize(600,600))  
         self.setMaximumSize(QSize(600,600)) 
                
@@ -544,7 +551,7 @@ class HelpWindow(QDialog):
         aboutSection = QTextEdit()
         aboutSection.setReadOnly(True)
         aboutSection.setHtml("""<h2 style="color: #00b2c3;"><strong>Add Records</strong></h2><ul><li style="font-size: 16px;">To add a new record, press the 'Add Record' button and enter
-                            the details into the new row.<li style="font-size: 16px;">Press the 'Save Records' button to save changes.</li></ul><h2 style="color: #00b2c3;"><strong>Delete Recods</Strong></h2><ul>
+                            the details into the new row.<li style="font-size: 16px;">Press the 'Save Records' button to save changes.</li><li style="font-size: 16px;">Dates must be entered in the fomat YYYY-MM-DD hh:mm:ss.</li></ul><h2 style="color: #00b2c3;"><strong>Delete Recods</Strong></h2><ul>
                             <li style="font-size: 16px;">To delete a record, select the desired record and press the 'Delete Record' button.<p style="color: red;">***Deleting a record is permanent and cannot be undone***</p></li></ul>
                             <h2 style="color: #00b2c3;"><strong>Search & Sort Records</strong></h2><ul><li style="font-size: 16px;">Records can be searched by entering a search query in the search bar.</li>
                             <li style="font-size: 16px;">Records can be sorted in ascending or descending order by clicking on the column headings (e.g. 'Domain', 'Admin Email', etc.).</li></ul><h2 style="color:
@@ -570,7 +577,7 @@ class SettingsWindow(QDialog):
         # Set UI to match main window
         self.setStyleSheet(main_window.styleSheet())
         self.setWindowTitle("Settings")
-        self.setWindowIcon(QIcon("C:/home/derek/Desktop/CS361/App/appicon.ico"))
+        self.setWindowIcon(QIcon("appicon.ico"))
         self.setMinimumSize(QSize(600,600))  
         self.setMaximumSize(QSize(600,600)) 
                
@@ -650,7 +657,7 @@ class LoginWindow(QDialog):
         # Set UI to match main window
         self.setStyleSheet(main_window.styleSheet())
         self.setWindowTitle("Welcome to Domain Scout")
-        self.setWindowIcon(QIcon('appicon.png'))
+        self.setWindowIcon(QIcon('appicon.ico'))
         self.setMinimumSize(QSize(600,600))  
         self.setMaximumSize(QSize(600,600)) 
                
@@ -735,3 +742,4 @@ app = QApplication(sys.argv)
 window = MainWindow()
 # Start Qt event loop
 app.exec()
+

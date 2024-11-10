@@ -25,7 +25,7 @@ class Export:
     def setupSocket(self):
         self.hostSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.hostSocket.bind((self.server, self.port))
-        self.hostSocket.listen(1)
+        self.hostSocket.listen(5)
 
         print(f"Export micro-service listening on {self.server}:{self.port}")
     
