@@ -219,22 +219,27 @@ class MainWindow(QMainWindow):
     Returns: None
     """
     def checkDelete(self):
-        checkDelMsg = QMessageBox()
-        
-        # ensure pop up msg matches current system UI (lightmode vs darkmode)
-        if self.styleSheet() == self.lightModeStyle:
-            checkDelMsg.setStyleSheet("QMessageBox { background-color: #cccccc; color: black; }")
-        else:
-            checkDelMsg.setStyleSheet("QMessageBox { background-color: #3c3c3c; color: white; }")
-        
-        checkDelMsg.setText("<font color='red'>Deleting a record is permanent and cannot be undone. Are you sure you want to proceed?</font>")
-        checkDelMsg.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
-        checkDelMsg.setDefaultButton(QMessageBox.StandardButton.No)
+        currentRow = self.data_table.currentRow()
 
-        response = checkDelMsg.exec()
+        # ensure a row is selected to delete
+        if currentRow != -1:
+            checkDelMsg = QMessageBox()
+            # ensure pop up msg matches current system UI (lightmode vs darkmode)
+            if self.styleSheet() == self.lightModeStyle:
+                checkDelMsg.setStyleSheet("QMessageBox { background-color: #cccccc; color: black; }")
+            else:
+                checkDelMsg.setStyleSheet("QMessageBox { background-color: #3c3c3c; color: white; }")
         
-        if response == QMessageBox.StandardButton.Yes:
-            self.deleteRow()
+            checkDelMsg.setText("<font color='red'>Deleting a record is permanent and cannot be undone. Are you sure you want to proceed?</font>")
+            checkDelMsg.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+            checkDelMsg.setDefaultButton(QMessageBox.StandardButton.No)
+
+            response = checkDelMsg.exec()
+        
+            if response == QMessageBox.StandardButton.Yes:
+                self.deleteRow()
+        else:
+            QMessageBox.warning(self, "No Record", "You must click on a record first!")
     
     """
     Method to delete selected record from database. Displays success or error message.
