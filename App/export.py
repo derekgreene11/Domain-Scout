@@ -62,6 +62,7 @@ class Export:
 
             msg = f"{filename} has been downloaded successfully to {file_path}"
             clientSocket.send(msg.encode())
+            print(f"Exported SQL dump to {file_path}")
 
     """
     Method to loop and run export micro-service.

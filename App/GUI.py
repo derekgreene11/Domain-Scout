@@ -367,10 +367,10 @@ class WHOISWindow(QDialog):
         layout_title = QHBoxLayout()
         
         self.data_table = QTableWidget()
-        self.data_table.setRowCount(18)
+        self.data_table.setRowCount(17)
         self.data_table.setColumnCount(1)
         self.data_table.setColumnWidth(0, 500)
-        self.data_table.setVerticalHeaderLabels(["Domain", "Registrar", "WHOIS Server", "Referral URL", "Updated Date", "Creation Date", "Expiration Date", "Nameservers", "Status", "Emails", "DNNSEC", "Name", "Org", "Address", "City", "State", "Postal Code", "Country"  ])
+        self.data_table.setVerticalHeaderLabels(["Domain", "Registrar", "WHOIS Server", "Referral URL", "Updated Date", "Creation Date", "Expiration Date", "Nameservers", "Status", "DNNSEC", "Name", "Org", "Address", "City", "State", "Postal Code", "Country"  ])
         self.data_table.setHorizontalHeaderLabels([""])
         
         lb_title2 = QLabel("WHOIS Details")
@@ -395,6 +395,7 @@ class WHOISWindow(QDialog):
         
         # Events for button presses
         bt_back.clicked.connect(self.close)
+        bt_export.clicked.connect(lambda: self.main_window.exportRecords())
         bt_about.clicked.connect(lambda: AboutWindow(self.main_window).exec())
         bt_help.clicked.connect(lambda: HelpWindow(self.main_window).exec())
         bt_settings.clicked.connect(lambda: SettingsWindow(self.main_window).exec())
@@ -435,7 +436,7 @@ class WHOISWindow(QDialog):
         
             whois_info = {field: "N/A" for field in [
             "Domain Name", "Registrar", "Whois Server", "Referral URL", "Updated Date", "Creation Date", 
-            "Expiration Date", "Name Servers", "Status", "Admin Email", "DNSSEC", "Name", "Org", "Address", 
+            "Expiration Date", "Name Servers", "Status", "DNSSEC", "Name", "Org", "Address", 
             "City", "State", "Postal Code", "Country"
             ]}
 
@@ -456,15 +457,14 @@ class WHOISWindow(QDialog):
             nameservers = whois_info["Name Servers"]
             self.data_table.setItem(7, 0, QTableWidgetItem(nameservers))
             self.data_table.setItem(8, 0, QTableWidgetItem(whois_info["Status"])) 
-            self.data_table.setItem(9, 0, QTableWidgetItem(whois_info["Admin Email"]))
-            self.data_table.setItem(10, 0, QTableWidgetItem(whois_info["DNSSEC"]))
-            self.data_table.setItem(11, 0, QTableWidgetItem(whois_info["Name"])) 
-            self.data_table.setItem(12, 0, QTableWidgetItem(whois_info["Org"])) 
-            self.data_table.setItem(13, 0, QTableWidgetItem(whois_info["Address"]))
-            self.data_table.setItem(14, 0, QTableWidgetItem(whois_info["City"])) 
-            self.data_table.setItem(15, 0, QTableWidgetItem(whois_info["State"])) 
-            self.data_table.setItem(16, 0, QTableWidgetItem(whois_info["Postal Code"])) 
-            self.data_table.setItem(17, 0, QTableWidgetItem(whois_info["Country"])) 
+            self.data_table.setItem(9, 0, QTableWidgetItem(whois_info["DNSSEC"]))
+            self.data_table.setItem(10, 0, QTableWidgetItem(whois_info["Name"])) 
+            self.data_table.setItem(11, 0, QTableWidgetItem(whois_info["Org"])) 
+            self.data_table.setItem(12, 0, QTableWidgetItem(whois_info["Address"]))
+            self.data_table.setItem(13, 0, QTableWidgetItem(whois_info["City"])) 
+            self.data_table.setItem(14, 0, QTableWidgetItem(whois_info["State"])) 
+            self.data_table.setItem(15, 0, QTableWidgetItem(whois_info["Postal Code"])) 
+            self.data_table.setItem(16, 0, QTableWidgetItem(whois_info["Country"])) 
 
         except Exception as e:
             print(f"Error fetching or displaying WHOIS data: {e}")

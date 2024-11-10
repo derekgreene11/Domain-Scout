@@ -26,7 +26,7 @@ def handle_value(value):
 def whoisQuery(domain):
     expectedFields = [
         "domain_name", "registrar", "whois_server", "referral_url", "updated_date", "creation_date", 
-        "expiration_date", "name_servers", "status", "admin_email", "dnssec", "name", "org", "address", 
+        "expiration_date", "name_servers", "status", "dnssec", "name", "org", "address", 
         "city", "state", "postal_code", "country"
     ]
     
@@ -57,13 +57,12 @@ def start_server(host, port):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as serverSocket:
         serverSocket.bind((host, port))
         serverSocket.listen(1)
-        print(f"Server started, listening on {host}:{port}")
+        print(f"WHOIS micro-service listening on {host}:{port}")
 
         while True:
             try:
                 # Accept incoming connection
                 conn, addr = serverSocket.accept()
-                print(f"Connection established with {addr}")
 
                 with conn:
                     while True:
@@ -72,7 +71,6 @@ def start_server(host, port):
                         
                         # Handle case where the client sends no data (disconnects early)
                         if not data:
-                            print(f"Client disconnected")
                             break
 
                         # Query WHOIS information for the domain
@@ -81,7 +79,7 @@ def start_server(host, port):
                         # Send the formatted WHOIS info as a string back to the client
                         try:
                             conn.sendall(whois_info.encode('utf-8'))
-                            print(f"Sent WHOIS info back to client for {data}")
+                            print(f"Sent WHOIS info to Domain Scout for {data}")
                         except BrokenPipeError:
                             print(f"Error: Broken pipe when sending data to {addr}")
                             break  # Handle the broken pipe and close the connection
