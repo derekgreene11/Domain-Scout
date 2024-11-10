@@ -13,6 +13,7 @@ from PyQt6.QtGui import *
 from dotenv import load_dotenv
 import sys
 import os
+import json
 import subprocess
 import requests
 import socket
@@ -50,7 +51,7 @@ class MainWindow(QMainWindow):
         self.data_table.setColumnCount(9)
         self.data_table.setHorizontalHeaderLabels(["Domain", "Admin Email", "Registrar", "Tech Email", "Registrant Email", "Creation Date", "Expiration Date", "Updated Date", "emails"  ])
         self.data_table.horizontalHeader().setStretchLastSection(True)
-        
+       
         appTitle = QLabel("Domain Scout")
         font = QFont("Cooper Black", 24, QFont.Weight.Bold)
         appTitle.setFont(font)
@@ -119,7 +120,7 @@ class MainWindow(QMainWindow):
         layout_buttons.addWidget(bt_about)  
         
         # Events for button presses
-        bt_whois.clicked.connect(lambda: WHOISWindow(self).exec())
+        bt_whois.clicked.connect(lambda: self.whoisQuery())
         bt_add.clicked.connect(lambda: self.data_table.insertRow(self.data_table.rowCount()))
         bt_delete.clicked.connect(lambda: self.checkDelete())
         bt_save.clicked.connect(lambda: self.saveRecord())
@@ -328,7 +329,12 @@ class MainWindow(QMainWindow):
             QMessageBox.warning(self, "Connection Failed", "Could not connect to the server.")
         finally:
             serverSocket.close() 
-
+    
+    def whoisQuery(self):
+        selectedRow = self.data_table.currentRow()
+        domain = self.data_table.item(selectedRow, 0).text()
+        WHOISWindow(self, domain).exec()
+        
     """
     Method to start microservices upon main applicaton start. 
     Parameters: None
@@ -336,12 +342,14 @@ class MainWindow(QMainWindow):
     """
     def startMicroservices(self):
         subprocess.Popen([sys.executable, 'export.py'])  
+        subprocess.Popen([sys.executable, 'whoisQuery.py'])
         
 # Record Details Window Class
 class WHOISWindow(QDialog):
-    def __init__(self, main_window):
+    def __init__(self, main_window, domain):
         super().__init__()
         self.main_window = main_window
+        self.domain = domain
 
         # Set UI to match main window
         self.setStyleSheet(main_window.styleSheet())
@@ -407,6 +415,63 @@ class WHOISWindow(QDialog):
         layout_main.addLayout(layout_search) 
         layout_main.addLayout(layout_table)
         self.setLayout(layout_main)
+        self.popTable(self.domain)
+    
+    """
+    Method to fetch WHOIS data from microservice over TCP socket to display in QTableWidget.
+    Parameters: domain: str
+    Returns: None
+    """
+    def popTable(self, domain):
+        server = "127.0.0.1"
+        port = 1025
+        serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+        try:
+            serverSocket.connect((server, port))
+            serverSocket.send(domain.encode()) 
+            response = serverSocket.recv(1024).decode()
+            lines = response.split("\n")  
+        
+            whois_info = {field: "N/A" for field in [
+            "Domain Name", "Registrar", "Whois Server", "Referral URL", "Updated Date", "Creation Date", 
+            "Expiration Date", "Name Servers", "Status", "Admin Email", "DNSSEC", "Name", "Org", "Address", 
+            "City", "State", "Postal Code", "Country"
+            ]}
+
+            for line in lines:
+                for field in whois_info.keys():
+                    if line.startswith(field):
+                        value = line[len(field):].strip(': ').strip()
+                        whois_info[field] = value
+                        break  
+
+            self.data_table.setItem(0, 0, QTableWidgetItem(domain))  # Domain
+            self.data_table.setItem(1, 0, QTableWidgetItem(whois_info["Domain Name"])) 
+            self.data_table.setItem(2, 0, QTableWidgetItem(whois_info["Whois Server"])) 
+            self.data_table.setItem(3, 0, QTableWidgetItem(whois_info["Referral URL"]))
+            self.data_table.setItem(4, 0, QTableWidgetItem(whois_info["Updated Date"]))
+            self.data_table.setItem(5, 0, QTableWidgetItem(whois_info["Creation Date"])) 
+            self.data_table.setItem(6, 0, QTableWidgetItem(whois_info["Expiration Date"])) 
+            nameservers = whois_info["Name Servers"]
+            self.data_table.setItem(7, 0, QTableWidgetItem(nameservers))
+            self.data_table.setItem(8, 0, QTableWidgetItem(whois_info["Status"])) 
+            self.data_table.setItem(9, 0, QTableWidgetItem(whois_info["Admin Email"]))
+            self.data_table.setItem(10, 0, QTableWidgetItem(whois_info["DNSSEC"]))
+            self.data_table.setItem(11, 0, QTableWidgetItem(whois_info["Name"])) 
+            self.data_table.setItem(12, 0, QTableWidgetItem(whois_info["Org"])) 
+            self.data_table.setItem(13, 0, QTableWidgetItem(whois_info["Address"]))
+            self.data_table.setItem(14, 0, QTableWidgetItem(whois_info["City"])) 
+            self.data_table.setItem(15, 0, QTableWidgetItem(whois_info["State"])) 
+            self.data_table.setItem(16, 0, QTableWidgetItem(whois_info["Postal Code"])) 
+            self.data_table.setItem(17, 0, QTableWidgetItem(whois_info["Country"])) 
+
+        except Exception as e:
+            print(f"Error fetching or displaying WHOIS data: {e}")
+        except ConnectionRefusedError:
+            QMessageBox.warning(self, "Connection Failed", "Could not connect to the server.")
+        finally:
+            serverSocket.close()
 
 # About Window Class
 class AboutWindow(QDialog):
