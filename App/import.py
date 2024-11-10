@@ -1,8 +1,8 @@
 # Name: Derek Greene
 # OSU Email: greenede@oregonstate.edu
 # Course: CS361 - Software Engineering I
-# Description: Micro-service to handle exporting SQL dump from Domain Scout database. Service is initiated from Domain Scout through a TCP socket. Upon initiation, SQL dump is retrieved from API at https://derekrgreene.com/ct-data/api/export-dump 
-# and saved to local file system. The file is saved to the 'backups/' directory in the project root. Upon successful fetch, the file name and path are sent back to Domain Scout over a TCP socket. 
+# Description: Micro-service to handle importing SQL dump from 'backups' directory to Domain Scout database. Service is initiated from Domain Scout through a TCP socket. Upon initiation, SQL dump is retrieved from 'backups' directory and sent to API at https://derekrgreene.com/ct-data/api/import-dump 
+# A message indicating success or failure it sent from the micro-service back to Domain Scout over a TCP socket. 
 
 import requests
 import socket
@@ -12,6 +12,7 @@ import os
 class Import:
     def __init__(self):
         self.API_URL = "https://derekrgreene.com/ct-data/api/import-dump"
+        self.BACKUP_DIR = "backups/"
         self.server = "127.0.0.1"
         self.port = 1026
         self.hostSocket = None
@@ -27,7 +28,7 @@ class Import:
         self.hostSocket.listen(5)
 
         print(f"Import micro-service listening on {self.server}:{self.port}")
-    
+
     """
     Method to await import requests from Domain Scout.
     Parameters: None
@@ -41,32 +42,38 @@ class Import:
             return None    
     
     """
+    Method to find most recent SQL dump file in 'backups' directory.
+    Parameters: None
+    Returns: filePath: str
+    """
+    def findSQLFile(self):
+        sqlFiles = [f for f in os.listdir(self.BACKUP_DIR) if f.endswith('.sql')]
+        
+        if not sqlFiles:
+            return None
+        
+        sqlFiles.sort(reverse=True)
+        return os.path.join(self.BACKUP_DIR, sqlFiles[0])
+
+    """
     Method to import SQL dump to API.
-    Parameters: clientSocket: object
+    Parameters: clientSocket: object, filePath: str
     Returns: None
     """
-    def importSQL(self, clientSocket):
-        with open(file_path, 'rb') as f:
-            files = {'file': (os.path.basename(file_path), f)}
+    def importSQL(self, filePath, clientSocket):
+        with open(filePath, 'rb') as f:
+            files = {'file': (os.path.basename(filePath), f)}
             response = requests.post(self.API_URL, files=files)
             
             if response.status_code == 200:
-                print(f"Imported SQL dump {file_path}")
-                msg = f"{file_path} has been imported successfully"
+                print(f"Imported SQL dump {filePath}")
+                msg = f"{filePath} has been imported successfully"
                 clientSocket.send(msg.encode())
             else:
-                print(f"Failed to import SQL dump {file_path}")
+                print(f"Failed to import SQL dump {filePath}")
                     
-
-            
-       
-        #print(f"Exported SQL dump to {file_path}")
-
-            
-
-
     """
-    Method to loop and run export micro-service.
+    Method to loop and run import micro-service.
     Parameters: None
     Returns: None
     """
@@ -75,9 +82,15 @@ class Import:
             
         while True:
             clientSocket = self.awaitStart()
-            self.importSQL(clientSocket)
+            filePath = self.findSQLFile()
+            if filePath:
+                self.importSQL(filePath, clientSocket)
+                clientSocket.close()
+            else:
+                print("No SQL dump found to import")
+                msg = "No SQL dump found to import!"
+                clientSocket.send(msg.encode())
             clientSocket.close()
 
 client = Import()
 client.run()
-

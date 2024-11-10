@@ -338,7 +338,12 @@ class MainWindow(QMainWindow):
             QMessageBox.warning(self, "Connection Failed", "Could not connect to the service.")
         finally:
             serverSocket.close()
-
+    
+    """
+    Method to call import microservice to fetch SQL dump from local files and sent to API to import to database. Microservice is called over TCP sockets.
+    Parameters: None
+    Returns: None
+    """
     def importRecords(self):
         server = "127.0.0.1"
         port = 1026
@@ -356,6 +361,11 @@ class MainWindow(QMainWindow):
         finally:
             serverSocket.close()
     
+    """
+    Method to call whois microservice to fetch WHOIS data for selected domain and populate response in QTableWidget. Microservice is called over TCP sockets.
+    Parameters: None
+    Returns: None
+    """
     def whoisQuery(self):
         selectedRow = self.data_table.currentRow()
         if selectedRow != -1:
@@ -416,8 +426,6 @@ class WHOISWindow(QDialog):
 
         bt_back = QPushButton("Back")
         bt_back.setFixedSize(100, 30)
-        bt_export = QPushButton("Export SQL")
-        bt_export.setFixedSize(100, 30)
         bt_help = QPushButton("Help")
         bt_help.setFixedSize(100, 30)
         bt_settings = QPushButton("Settings")
@@ -427,15 +435,12 @@ class WHOISWindow(QDialog):
         
         # Events for button presses
         bt_back.clicked.connect(self.close)
-        bt_export.clicked.connect(lambda: self.main_window.exportRecords())
         bt_about.clicked.connect(lambda: AboutWindow(self.main_window).exec())
         bt_help.clicked.connect(lambda: HelpWindow(self.main_window).exec())
         bt_settings.clicked.connect(lambda: SettingsWindow(self.main_window).exec())
         
         layout_buttons.addSpacing(10)
         layout_buttons.addWidget(bt_back)
-        layout_buttons.addSpacing(10)
-        layout_buttons.addWidget(bt_export)
         layout_buttons.addSpacing(350)
         layout_buttons.addWidget(bt_help)
         layout_buttons.addSpacing(10)
@@ -767,4 +772,3 @@ app = QApplication(sys.argv)
 window = MainWindow()
 # Start Qt event loop
 app.exec()
-
