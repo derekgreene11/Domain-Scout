@@ -161,8 +161,8 @@ class MainWindow(QMainWindow):
         tutorial.setWindowTitle("Welcome Tutorial")
         tutorial.setWindowIcon(QIcon("appicon.ico"))
         tutorial.setText("""<p><h1><span style="color: #00b2c3; font-family: Cooper Black; text-align: center;">Welcome Tutorial!</span></h1><br><ul><span style="color: #00b2c3; font-family: Cooper Black;">Searching:</span><li>
-                         <span style="color: #3c3c3c; font-family: Cooper Black;">to search records, enter your search query into the search bar at top of window.</span></li></ul><br><ul><span style="color: 
-                         #00b2c3; font-family: Cooper Black;">WHOIS Details:</span><li><span style="color: #3c3c3c; font-family: Cooper Black;">to view associated WHOIS details, select desired domain
+                         <span style="color: #3c3c3c; font-family: Cooper Black;">To search records, enter your search query into the search bar at top of window.</span></li></ul><br><ul><span style="color: 
+                         #00b2c3; font-family: Cooper Black;">WHOIS Details:</span><li><span style="color: #3c3c3c; font-family: Cooper Black;">To view associated WHOIS details, select desired domain
                          from list and then select the 'view details' button on the right of the screen.</span></li></ul><br><ul><span style="color: #00b2c3; font-family: Cooper Black;">Importing & Exporting:
                          </span><li><span style="color: #3c3c3c; font-family: Cooper Black;">To import and export data into the database, make sure data is formatted exactly matching the SQL database. See Help page for details and more information.</span></li></ul></p>""")
         tutorial.exec()
@@ -732,9 +732,11 @@ class LoginWindow(QDialog):
         # set input to show as *** for password input
         self.lb_pInput.setEchoMode(QLineEdit.EchoMode.Password)
         self.bt_login = QPushButton("Login")
+        self.bt_signup = QPushButton("Sign Up")
 
         # Event for button press
         self.bt_login.clicked.connect(self.login)
+        self.bt_signup.clicked.connect(lambda: SignupWindow(self).exec())
 
         startInfo = QTextEdit()
         startInfo.setReadOnly(True)
@@ -751,6 +753,7 @@ class LoginWindow(QDialog):
         layout_main.addLayout(layout_pass)
         layout_main.addWidget(startInfo)
         layout_main.addWidget(self.bt_login)
+        layout_main.addWidget(self.bt_signup)
         self.setLayout(layout_main)
     
     """
@@ -782,6 +785,96 @@ class LoginWindow(QDialog):
         self.main_window.import_service.terminate()
         self.main_window.whois_service.terminate()
         event.accept()
+
+# Signup Window Class
+class SignupWindow(QDialog):
+    def __init__(self, main_window):
+        super().__init__()
+        self.main_window = main_window
+
+        # Set UI to match main window
+        self.setStyleSheet(main_window.styleSheet())
+        self.setWindowTitle("Sign up for Domain Scout")
+        self.setWindowIcon(QIcon('appicon.ico'))
+        self.setMinimumSize(QSize(600,600))  
+        self.setMaximumSize(QSize(600,600)) 
+               
+        layout_main = QVBoxLayout()
+        layout_uname = QHBoxLayout()
+        layout_pass = QHBoxLayout()
+        layout_title = QHBoxLayout()
+        
+        appTitle = QLabel("Domain Scout")
+        font = QFont("Cooper Black", 24, QFont.Weight.Bold)
+        appTitle.setFont(font)
+        appTitle.setFixedWidth(240)
+        appTitle.setStyleSheet("color: #00b2c3;")
+        
+        appVersion = QLabel("V1.0")
+        font2 = QFont("Cooper Black", 10)
+        appVersion.setFont(font2)
+        appVersion.setStyleSheet("color: #00b2c3;")
+       
+        layout_title.addWidget(appTitle)
+        layout_title.addWidget(appVersion)
+        layout_title.setAlignment(Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignTop)
+        layout_uname.setAlignment(Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignVCenter)
+        layout_pass.setAlignment(Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignVCenter)
+
+        font3 = QFont("Cooper Black", 20)
+        self.lb_userName = QLabel("Username:")
+        self.lb_userName.setFont(font3)
+        self.lb_userName.setStyleSheet("color: #3c3c3c;")
+        self.lb_uInput = QLineEdit()
+        self.lb_pass = QLabel("Password:")
+        self.lb_pass.setFont(font3)
+        self.lb_pass.setStyleSheet("color: #3c3c3c;")
+        self.lb_pInput = QLineEdit()
+
+        # set input to show as *** for password input
+        self.lb_pInput.setEchoMode(QLineEdit.EchoMode.Password)
+        self.bt_signUp = QPushButton("Sign Up")
+
+        # Event for button press
+        self.bt_signUp.clicked.connect(lambda: self.createEnv())
+
+
+        startInfo = QTextEdit()
+        startInfo.setReadOnly(True)
+        startInfo.setMaximumSize(QSize(600, 150))
+        startInfo.setHtml("""<ul><li><h2 style="color: #00b2c3;"><strong>To ensure user privacy, your username and password are never sent back to the developer and instead are stored locally on your machine in a .env file.</strong></h2></li>
+                          <li><h2 style="color: #00b2c3;"><strong>After signup, you will be re-directed back to the login window.</strong></h2></li></ul>""")
+
+        layout_uname.addWidget(self.lb_userName)
+        layout_uname.addWidget(self.lb_uInput)
+        layout_pass.addWidget(self.lb_pass)
+        layout_pass.addWidget(self.lb_pInput)
+        layout_main.addLayout(layout_title)
+        layout_main.addLayout(layout_uname)
+        layout_main.addLayout(layout_pass)
+        layout_main.addWidget(startInfo)
+        layout_main.addWidget(self.bt_signUp)
+        self.setLayout(layout_main)
+    
+    """
+    Method to create .env file to store username and password.
+    Parameters: None
+    Returns: None
+    """
+    def createEnv(self):
+        usernameInput = self.lb_uInput.text()
+        passwordInput = self.lb_pInput.text()
+        envFile = '.env'
+        
+        if not usernameInput or not passwordInput:
+            QMessageBox.warning(self, "Error", "<font color='red'>Please enter a username and password!</font>")
+        else:
+            # write username and password to .env file
+            with open(envFile, 'w') as f:
+                f.write(f"USER1={usernameInput}\n")
+                f.write(f"PASS={passwordInput}\n")
+                QMessageBox.information(self, "Signup", "<font color='black'>Signup successful!</font>")
+                self.accept()      
 
 """
 Function to start program and create main window object

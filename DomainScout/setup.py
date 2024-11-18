@@ -10,7 +10,7 @@ setup(
     description="A desktop GUI client to view discovered domains using known disposable emails in WHOIS contact records.",
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
-    url="https://",
+    url="https://derekrgreene.com",
     packages=find_packages(),
     install_requires=[
         'requests',

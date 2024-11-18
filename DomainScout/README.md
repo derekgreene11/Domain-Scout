@@ -10,14 +10,6 @@ CT Domain Data identifies disposable email addresses used as contact methods in 
 To install the application, run:
 `pip install domainscout`
 
-Create a .env file in the project root directory with the following enviornment variables:
-(make sure to remove < >)
-
-```
-USER1=<enter your username>
-PASS=<enter your password>
-```
-
 Run the application
 
 `domainscout`
