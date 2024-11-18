@@ -8,6 +8,7 @@ CT Domain Data identifies disposable email addresses used as contact methods in 
 ## Usage
 
 To install the application, run:
+
 `pip install domainscout`
 
 Run the application
