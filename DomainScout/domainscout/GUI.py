@@ -68,7 +68,7 @@ class MainWindow(QMainWindow):
         appTitle.setFixedWidth(240)
         appTitle.setStyleSheet("color: #00b2c3;")
         
-        appVersion = QLabel("V1.0")
+        appVersion = QLabel("V1.1")
         font2 = QFont("Cooper Black", 10)
         appVersion.setFont(font2)
         appVersion.setStyleSheet("color: #00b2c3;")
@@ -708,7 +708,7 @@ class LoginWindow(QDialog):
         appTitle.setFixedWidth(240)
         appTitle.setStyleSheet("color: #00b2c3;")
         
-        appVersion = QLabel("V1.0")
+        appVersion = QLabel("V1.1")
         font2 = QFont("Cooper Black", 10)
         appVersion.setFont(font2)
         appVersion.setStyleSheet("color: #00b2c3;")
@@ -810,7 +810,7 @@ class SignupWindow(QDialog):
         appTitle.setFixedWidth(240)
         appTitle.setStyleSheet("color: #00b2c3;")
         
-        appVersion = QLabel("V1.0")
+        appVersion = QLabel("V1.1")
         font2 = QFont("Cooper Black", 10)
         appVersion.setFont(font2)
         appVersion.setStyleSheet("color: #00b2c3;")
