@@ -1,0 +1,94 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+*.egg
+MANIFEST
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+*.log
+
+# mypy
+.mypy_cache/
+
+# Pyre type checker
+.pyre/
+
+# Pytest
+.cache/
+
+# Translations
+*.mo
+*.po
+
+# VS Code settings
+.vscode/
+
+# PyCharm settings
+.idea/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# dotenv
+.env
+
+# Environment variables
+*.env
+
+# MacOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+
+# Virtual environment
+venv/
+ENV/
+env/
+venv.bak/
+env.bak/
+
+# Domains JSON
+domains.json
+
+# Git configuration
+.git/
+.htaccess
+
+# Data
+*.json
+!static/sources/research/DCV-Dependencies/data.json
+
+# Logs
+*.out
+
+# Cron Jobs
+cron_jobs/
