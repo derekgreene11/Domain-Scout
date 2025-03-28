@@ -4,7 +4,7 @@
 # Description: Domain Scout is the primary GUI to view vulnerable domains found by CT Domain Data. CT Domain Data identifies disposable email addresses used as contact methods in WHOIS records.
 #              Domains are collected using Certstream Server Go which streams Certificate Transparency logs continuously to a websocket connection. Domains are extracted from the data stream and
 #              WHOIS queries are subsequently made to identify contact email addresses which are compared against a list of 15k+ known disposable email domains. If a disposable email address is 
-#              found, the domain and associated data is added to the database and displayed in Domain Scout. This application fetches data from an API at: https://derekrgreene.com/ct-data/api.
+#              found, the domain and associated data is added to the database and displayed in Domain Scout. This application fetches data from an API at: https://derekrgreene.com/DomainScout/api.
 #              If you are unable to resolve this domain, the application will not load the data. Please ensure the API is reachable.
 
 from PyQt6.QtCore import *
@@ -181,12 +181,12 @@ class MainWindow(QMainWindow):
             sys.exit(0)
     
     """
-    Method to fetch ct-data from api endpoint @ derekrgreene.com/ct-data/api.
+    Method to fetch ct-data from api endpoint @ derekrgreene.com/DomainScout/api.
     Parameters: None
     Returns: []: list of dict
     """
     def fetchData(self):
-        response = requests.get('https://derekrgreene.com/ct-data/api')
+        response = requests.get('https://derekrgreene.com/DomainScout/api')
         if response.status_code == 200:
             records = response.json()
             return records
@@ -259,7 +259,7 @@ class MainWindow(QMainWindow):
         delRecord = self.data_table.item(currRow, 0).text()
         
         # API call to delete record from database
-        apiUrl = f"https://derekrgreene.com/ct-data/api/delete?domain={delRecord}"
+        apiUrl = f"https://derekrgreene.com/DomainScout/api/delete?domain={delRecord}"
         response = requests.delete(apiUrl)
 
         if response.status_code == 200:
@@ -305,7 +305,7 @@ class MainWindow(QMainWindow):
         # Send record to save to API to save to CT-Data application database
         if newRecords:
             try:
-                response = requests.post('https://derekrgreene.com/ct-data/api/save', json=newRecords)
+                response = requests.post('https://derekrgreene.com/DomainScout/api/save', json=newRecords)
 
                 if response.status_code == 200:
                     QMessageBox.information(self, "Success", "New record(s) saved successfully!", QMessageBox.StandardButton.Ok)
@@ -544,7 +544,7 @@ class AboutWindow(QDialog):
         bt_back.clicked.connect(self.close)
         aboutSection = QTextEdit()
         aboutSection.setReadOnly(True)
-        aboutSection.setHtml("""<p"><span style="color: #00b2c3; font-family: Cooper Black;">Domain Scout</span> is the primary GUI to view vulnerable domains found by CT Domain Data (see https://derekrgreene.com/ct-data).<br><br> 
+        aboutSection.setHtml("""<p"><span style="color: #00b2c3; font-family: Cooper Black;">Domain Scout</span> is the primary GUI to view vulnerable domains found by CT Domain Data (see https://derekrgreene.com/DomainScout).<br><br> 
                             CT Domain Data identifies disposable email addresses used as contact methods in WHOIS records. Domains are collected using Certstream
                             Server Go which streams Certificate Transparency logs continuously to a websocket connection. Domains are extracted from the data stream 
                             and WHOIS queries are subsequently made to identify contact email addresses which are compared against a list of 15k+ known disposable email 
@@ -594,7 +594,7 @@ class HelpWindow(QDialog):
                             #00b2c3;"><strong>Importing & Exporting Records</h2></strong><ul><li style="font-size: 16px;">In order to properly import SQL records into the database, they will need to match the 
                             <strong>EXACT</strong> format of the database.</li><li style="font-size: 16px;">To view the required format, first export the data to view the resultant SQL dump file.</li><li style="font-size:
                             16px;">To export all records, simply click on the 'Export SQL' button. <br><span style="color: #00b2c3;"><strong>NOTE:</strong></span> This will export all records.</li></ul><h2 style="color: #00b2c3;"><strong>Misc</strong>
-                            </h2><ul><li style="font-size: 16px;">This application fetches data from an API at:<br>https://derekrgreene.com/ct-data/api<br><br><span style="color: #00b2c3;"><strong>NOTE:</strong></span> If you are unable to resolve 
+                            </h2><ul><li style="font-size: 16px;">This application fetches data from an API at:<br>https://derekrgreene.com/DomainScout/api<br><br><span style="color: #00b2c3;"><strong>NOTE:</strong></span> If you are unable to resolve 
                             this domain, the application will not load the data. Please ensure the API is reachable.</li></ul><br><p style="text-align: center";<strong>Made with &#128154; by <span style="color: #00b2c3;">Derek R. Greene</span></strong><br>
                             &copy; 2024 <span style="color: #00b2c3;">Derek R. Greene</span>. All rights reserved.</p>""")
         layout_main.addWidget(lb_title2)

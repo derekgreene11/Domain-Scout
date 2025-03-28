@@ -1,7 +1,7 @@
 # Name: Derek Greene
 # OSU Email: greenede@oregonstate.edu
 # Course: CS361 - Software Engineering I
-# Description: Micro-service to handle exporting SQL dump from Domain Scout database. Service is initiated from Domain Scout through a TCP socket. Upon initiation, SQL dump is retrieved from API at https://derekrgreene.com/ct-data/api/export-dump 
+# Description: Micro-service to handle exporting SQL dump from Domain Scout database. Service is initiated from Domain Scout through a TCP socket. Upon initiation, SQL dump is retrieved from API at https://derekrgreene.com/DomainScout/api/export-dump 
 # and saved to local file system. The file is saved to the 'backups/' directory in the project root. Upon successful fetch, the file name and path are sent back to Domain Scout over a TCP socket. 
 
 import requests
@@ -11,7 +11,7 @@ import os
 # Class to handle exporting SQL dump from Domain Scout database
 class Export:
     def __init__(self):
-        self.API_URL = "https://derekrgreene.com/ct-data/api/export-dump"
+        self.API_URL = "https://derekrgreene.com/DomainScout/api/export-dump"
         self.SAVE_DIR = "backups/"
         self.server = "127.0.0.1"
         self.port = 1024
