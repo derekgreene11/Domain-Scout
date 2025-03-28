@@ -4,7 +4,7 @@ import os
 
 setup(
     name='DomainScout',
-    version="1.0",
+    version="1.2",
     author="Derek R. Greene",
     author_email="derek@derekrgreene.com",
     description="A desktop GUI client to view discovered domains using known disposable emails in WHOIS contact records.",
